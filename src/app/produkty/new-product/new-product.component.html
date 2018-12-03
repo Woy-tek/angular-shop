@@ -1,0 +1,43 @@
+<div class="container">
+    <h3>Dodaj do listy produktów</h3> <br>
+  <div class="row">
+    <div class="col-3">
+        Nazwa:
+    </div><div class="col-9">
+        <input [(ngModel)]=product.name><br>
+    </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+          Ilość:
+      </div><div class="col-9">
+          <input [(ngModel)]=product.count>
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+          Cena:
+      </div><div class="col-9">
+          <input [(ngModel)]=product.price>
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+          Description:
+      </div><div class="col-9">
+          <input [(ngModel)]=product.description>
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col-3">
+          Image:
+      </div><div class="col-9">
+          <input [(ngModel)]=product.img>
+      </div>
+  </div>
+  <button class="btn btn-primary" (click)=addNewProduct()>Dodaj</button>
+</div>

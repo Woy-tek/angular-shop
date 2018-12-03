@@ -1,0 +1,50 @@
+
+<div class="container bg-secondary">
+  <div class="row">
+    <div class="col-12 text-white">
+      <div class="btn-group-toggle float-left col-lg-6 col-sm-12">
+          
+          <input type="checkbox" [(ngModel)]='checkbox1' (change)="doFiltering('Dobry')"> Kategoria 'Dobry'
+        <br>
+          <input type="checkbox" [(ngModel)]='checkbox2' (change)="doFiltering('Bardzo Dobry')"> Kategoria 'Bardzo Dobry'
+        <br>
+          <input type="checkbox" [(ngModel)]='checkbox3' (change)="doFiltering('Nie Dobry')"> Kategoria 'Nie Dobry'
+        <br>
+      </div>
+        <!-- <ul>
+          <li *ngFor="let a of filterTab">{{a}}</li>
+        </ul> -->
+      <div class="text-right float-right col-lg-6 col-sm-12">
+        <h3>Zakres ceny</h3>
+        <input class="col-3" type="text" [(ngModel)]="minFilter">
+        -
+        <input class="col-3" type="text" [(ngModel)]="maxFilter"> <br>
+        <button class="btn btn-primary" style="margin-right: 5px;" (click)="setPage(0)">Filtruj</button>
+        <button class="btn btn-primary" (click)="resetFilter()">Resetuj Filtr</button>
+      </div>
+    </div>
+    <div class="col-12 card" >
+      <div class="card-body">
+      <h4 class="card-title">Produkty</h4>
+      <div class="row">
+        <hello-produkt class="col-md-3" [product]="p" *ngFor="let p of pagedProducts" (toDelete)="deleteProduct($event)" (toAddToCart)="addToCart($event)" [ngStyle]="{
+          'background': setColor(p.count),
+          'border-style' : setBorder(p.price)
+      }"></hello-produkt>
+      </div>
+      </div>
+      <div>
+        <nav aria-label="Page navigation example">
+          <ul class="pagination pg-blue">
+            <li class="page-item" *ngFor="let num of pagination; let i = index" (click)="setPage(i)"><a class="page-link" mdbWavesEffect>{{num}}</a></li>
+            <!-- <li class="page-item"><a class="page-link" mdbWavesEffect>Previous</a></li>
+            <li class="page-item"><a class="page-link" mdbWavesEffect>1</a></li>
+            <li class="page-item"><a class="page-link" mdbWavesEffect>2</a></li>
+            <li class="page-item"><a class="page-link" mdbWavesEffect>3</a></li>
+            <li class="page-item"><a class="page-link" mdbWavesEffect>Next</a></li> -->
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

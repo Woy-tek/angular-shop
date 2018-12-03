@@ -1,0 +1,41 @@
+<form [formGroup]="formularz" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+       <label>First Name</label>
+      <input type="text" formControlName="firstName" class="form-control" [ngClass]="{ 'is-invalid': zatwierdzone && f.firstName.errors }" />
+      <div *ngIf= "zatwierdzone && f.firstName.errors" class="invalid-feedback"> 
+        <div *ngIf="f.firstName.errors.required">Imię jest wymagane</div>
+      </div>
+  </div>
+  <div class="form-group">
+      <label>Last Name</label>
+      <input type="text" formControlName="lastName" class="form-control" [ngClass]="{ 'is-invalid': zatwierdzone && f.lastName.errors }" />
+      <div *ngIf= "zatwierdzone && f.lastName.errors" class="invalid-feedback">
+          <div *ngIf="f.lastName.errors.required">Nazwisko jest wymagane</div>
+      </div>
+  </div>
+ <div class="form-group">
+      <label>Email</label>
+      <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': zatwierdzone && f.email.errors }" />
+      <div *ngIf= "zatwierdzone && f.email.errors" class="invalid-feedback">
+          <div *ngIf="f.email.errors.required">Email jest wymagany</div>
+          <div *ngIf="f.email.errors.email">Email jest niepoprawny</div>
+      </div>
+  </div>
+  <div class="form-group">
+    <label>Adres</label>
+    <input type="text" formControlName="address" class="form-control" [ngClass]="{ 'is-invalid': zatwierdzone && f.address.errors }" />
+    <div *ngIf= "zatwierdzone && f.address.errors" class="invalid-feedback">
+      <div *ngIf="f.address.errors.required">Adres jest wymagany</div>
+    </div>
+  </div>
+  <div class="form-group">
+      <button [disabled]="loading" class="btn btn-primary">Potwierdź</button>
+  </div>
+</form>
+
+<!-- <div>
+    {{person.firstName}} <br>
+    {{person.lastName}} <br>
+    {{person.email}} <br>
+    {{person.address}} <br>
+</div> -->
