@@ -20,6 +20,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireModule } from 'angularfire2';
 import { environment } from 'src/environments/environment';
+import { LoginComponent } from './login/login.component';
+import { AdminComponent } from './admin/admin.component';
+import { AngularFireDatabaseModule } from 'angularfire2/database'; 
 
 @NgModule({
   declarations: [
@@ -30,7 +33,9 @@ import { environment } from 'src/environments/environment';
     NewProductComponent,
     KoszykComponent,
     KoszykViewComponent,
-    PotwierdzenieComponent
+    PotwierdzenieComponent,
+    LoginComponent,
+    AdminComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -44,8 +49,8 @@ import { environment } from 'src/environments/environment';
     ),
     // NgbModule,
     // NgbModule.forRoot()
-    AngularFireAuthModule
-    
+    AngularFireAuthModule,
+    AngularFireDatabaseModule
   ],
   providers: [ProduktServisService],
   bootstrap: [HelloComponent]
