@@ -7,14 +7,26 @@ import { PotwierdzenieComponent } from './potwierdzenie/potwierdzenie.component'
 import { LoginComponent } from './login/login.component';
 import { AdminComponent } from './admin/admin.component';
 import { AuthGuard } from './authGuard';
+import { ClientSiteComponent } from './client-site/client-site.component';
+import { OrdersComponent } from './orders/orders.component';
+import { ProductBaseComponent } from './product-base/product-base.component';
 
 const routes: Routes = [
-  { path: '', component: ProduktyComponent},
-  { path: 'koszyk', component: KoszykComponent},
-  { path: 'koszykv', component: KoszykViewComponent},
-  { path: 'confirm', component: PotwierdzenieComponent},
+  { path: '', component: ClientSiteComponent,
+    children: [
+      { path: '', redirectTo: 'products', pathMatch: 'full'},
+      { path: 'products', component: ProduktyComponent},
+      { path: 'koszyk', component: KoszykComponent},
+      { path: 'confirm', component: PotwierdzenieComponent}
+    ]
+  },
   { path: 'login', component: LoginComponent},
-  { path: 'admin', component: AdminComponent}// canActivate: [AuthGuard]}
+  { path: 'admin', component: AdminComponent, //, canActivate: [AuthGuard]}
+    children: [
+      { path: 'orders', component: OrdersComponent },
+      { path: 'productBase', component:ProductBaseComponent}
+    ]
+  }
 
 ];
 

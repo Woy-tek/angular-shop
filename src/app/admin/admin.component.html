@@ -1,5 +1,11 @@
 <p>
   admin works!
   {{data}}
-  <button (click)="getD()">AAA</button>
+  <button (click)="getD()">AAA</button> <br>
+
+  <a routerLink="/admin/orders">Zamówienia</a> <br>
+  <a routerLink="/admin/productBase">Produkty</a>
+
+  <router-outlet></router-outlet>
+
 </p>

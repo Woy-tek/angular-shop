@@ -34,42 +34,23 @@ export class KoszykViewComponent implements OnInit, OnDestroy {
         this.count++;
         this.sum += message.price;
       }
-
-      //   var p = {
-      //     name: message.name,
-      //     count: 1,
-      //     price: message.price,
-      //     description: message.description,
-      //     img: message.img
-      //   };
-      //   console.log(message.price)
-        
-      // if(message.price < 0){
-      //   this.count--;
-      //   this.sum += message.price;
-      //   p.price = (-1)*p.price;
-      //   // this.productService.deleteFromCart(p);
-
-      // }else{
-      //   this.count++;
-      //   this.sum += message.price;
-        
-  
-      //   // this.productService.addToCart(p);
-      // }
     });
   }
 
   ngOnInit() {
+    this.sum = 0.0;
+    this.count = 0;
       this.cart = this.productService.getCart();
-      // this.count = this.cart.length;
-      // this.sum = this.count*2;
+      this.cart.forEach(
+        element => {
+          this.count += element.count;
+          this.sum += element.count * element.price;
+        }
+      )
   }
 
   ngOnDestroy() {
-    // unsubscribe to ensure no memory leaks
     this.subscription.unsubscribe();
-    // console.log("END");
   }
 
 }

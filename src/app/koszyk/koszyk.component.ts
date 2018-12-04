@@ -67,4 +67,32 @@ export class KoszykComponent implements OnInit, OnDestroy {
     
   }
 
+  addProduct(product : ProductInterface){
+    let p =  {
+      id: product.id,
+      name: product.name,
+      count: 1,
+      price: product.price,
+      description: product.description,
+      img: product.img
+    }// as ProductInterface;
+
+    this.productsService.getProduct(p.id).subscribe(
+      a =>{
+        if(a.count > 0) this.add(p);
+      }
+    )
+    }
+
+  add(p : ProductInterface){
+    this.messageService.sendMessage(p)
+    this.productsService.addToCart(p);
+    this.productsService.getProduct(p.id).subscribe(
+      product => {p.count = product.count - 1;
+      this.productsService.updateProduct(p).subscribe(
+        _ => this.updateStats()
+      )}
+    )
+  }
+
 }

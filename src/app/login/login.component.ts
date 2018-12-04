@@ -11,13 +11,39 @@ export class LoginComponent implements OnInit {
   login : string;
   password : string;
 
+  info : string;
+
   constructor(private auth : AuthService) { }
 
   ngOnInit() {
   }
 
   loginUser(){
-    this.auth.login({email: this.login, password: this.password});
+    // this.auth.login({email: this.login, password: this.password});
+    this.auth.register({email: this.login, password: this.password}).then(
+      fulfilled => {
+        this.info = "OK"
+      }, rejected => {
+        this.info = rejected.message;
+      }
+    )
+  }
+
+  loginUser2(){
+    this.auth.login({email: this.login, password: this.password}).then(
+      fulfilled => {
+            this.info = "OK"
+          }, rejected => {
+            this.info = rejected.message;
+          }
+    );
+    // this.auth.register({email: this.login, password: this.password}).then(
+    //   fulfilled => {
+    //     this.info = "OK"
+    //   }, rejected => {
+    //     this.info = rejected.message;
+    //   }
+    // )
   }
 
 }

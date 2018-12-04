@@ -22,7 +22,12 @@ import { AngularFireModule } from 'angularfire2';
 import { environment } from 'src/environments/environment';
 import { LoginComponent } from './login/login.component';
 import { AdminComponent } from './admin/admin.component';
-import { AngularFireDatabaseModule } from 'angularfire2/database'; 
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { OrdersComponent } from './orders/orders.component';
+import { ProductBaseComponent } from './product-base/product-base.component';
+import { ClientSiteComponent } from './client-site/client-site.component'; 
+import { OrderService } from './order.service';
+import { EditProductComponent } from './product-base/edit-product/edit-product.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +40,11 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
     KoszykViewComponent,
     PotwierdzenieComponent,
     LoginComponent,
-    AdminComponent
+    AdminComponent,
+    OrdersComponent,
+    ProductBaseComponent,
+    ClientSiteComponent,
+    EditProductComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -52,7 +61,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
     AngularFireAuthModule,
     AngularFireDatabaseModule
   ],
-  providers: [ProduktServisService],
+  providers: [ProduktServisService, OrderService],
   bootstrap: [HelloComponent]
 })
 export class MainModule { }

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ProductInterface } from '../produkty/productInterface';
+import { ProduktServisService } from '../produkt-servis.service';
 
 @Component({
   selector: 'app-potwierdzenie',
@@ -11,9 +13,9 @@ export class PotwierdzenieComponent implements OnInit {
   formularz : FormGroup;
   zatwierdzone : boolean = false;
 
-  person : Person;
+  order : Order;
 
-  constructor(private formBuilder : FormBuilder) { }
+  constructor(private formBuilder : FormBuilder, private productService : ProduktServisService) { }
 
   ngOnInit() {
     this.formularz = this.formBuilder.group({
@@ -33,20 +35,22 @@ export class PotwierdzenieComponent implements OnInit {
     if (this.formularz.invalid) {
         return;
     }else{
-      this.person = {
+      this.order = {
         firstName: this.formularz.controls['firstName'].value,
         lastName: this.formularz.controls['lastName'].value,
         email: this.formularz.controls['email'].value,
         address: this.formularz.controls['address'].value,
+        cart: this.productService.getCart()
       }
     }
 }
 
 }
 
-export interface Person{
+export interface Order{
   firstName : string;
   lastName: string;
   email : string;
   address : string;
+  cart: ProductInterface[];
 }

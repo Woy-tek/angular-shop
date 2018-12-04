@@ -8,8 +8,12 @@
         Hasło: <input type="password" [(ngModel)]="password">
       </div>
       <div class="w-100">
-        <button class="btn btn-primary" (click)="loginUser">Zaloguj</button>
+        <button class="btn btn-primary" (click)="loginUser()">Zarejestruj</button>
       </div>
+      <div class="w-100">
+        <button class="btn btn-primary" (click)="loginUser2()">Zaloguj</button>
+      </div>
+      {{info}}
     </div>
   </div>
 </div>

@@ -14,43 +14,18 @@
         <td>{{c.name}}</td>
         <td>{{c.count}}</td>
         <td>{{c.price * c.count | currency}}</td>
-        <td><button class="btn btn-warning" (click)="deleteProduct(c)">Usuń z koszyka</button></td>
+        <td>
+            <button class="btn btn-primary" (click)="addProduct(c)">Dodaj sztukę</button>
+          <button class="btn btn-warning" (click)="deleteProduct(c)">Usuń z koszyka</button>
+        </td>
       </tr>
     </tbody>
   </table>
-  <!-- <div class="row">
-      <div class="col-3">
-        <h4>Nazwa</h4>
-      </div>
-      <div class="col-3">
-        <h4>Ilość </h4>
-      </div>
-      <div class="col-3">
-        <h4>Cena</h4>
-      </div>
-      <div class="col-3"> -->
-        <!-- <button class="btn btn-warning" (click)="deleteProduct(c)">Usuń z koszyka</button> <br> -->
-      <!-- </div>
-  </div>
-  <div class="row"  *ngFor="let c of cart">
-      <div class="col-3">
-        {{c.name}}
-      </div>
-      <div class="col-3">
-        {{c.count}} 
-      </div>
-      <div class="col-3">
-        {{c.price * c.count | currency}}
-      </div>
-      <div class="col-3">
-        <button class="btn btn-warning" (click)="deleteProduct(c)">Usuń z koszyka</button> <br>
-      </div>
-  </div> -->
   <div>
     <p>
       Ilość: {{count}} <br>
       Suma: {{sum | currency}}<br>
-      <a routerLink="/"> <button class="btn btn-primary">Wróć do zakupów</button> </a>
+      <a routerLink="/products"> <button class="btn btn-primary">Wróć do zakupów</button> </a>
       <a routerLink="/confirm"><button class="btn btn-primary">Złóż zamówienie</button></a>
 
     </p>  
