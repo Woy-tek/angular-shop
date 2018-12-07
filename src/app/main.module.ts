@@ -30,6 +30,8 @@ import { OrderService } from './order.service';
 import { EditProductComponent } from './product-base/edit-product/edit-product.component';
 import { FirebaseActionsComponent } from './firebase-actions/firebase-actions.component';
 import { FirebaseServiceService } from './firebase-service.service';
+import { OrderComponent } from './orders/order/order.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,9 @@ import { FirebaseServiceService } from './firebase-service.service';
     ProductBaseComponent,
     ClientSiteComponent,
     EditProductComponent,
-    FirebaseActionsComponent
+    FirebaseActionsComponent,
+    OrderComponent,
+    PageNotFoundComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),

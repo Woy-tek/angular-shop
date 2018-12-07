@@ -13,11 +13,13 @@ export class AdminComponent implements OnInit {
 
   public data: AngularFireList<any[]>;
 
-  constructor(private db : AngularFireDatabase, private authService : AuthService
-    ,private router : Router) { }
+  constructor(private db : AngularFireDatabase, 
+    private authService : AuthService,
+    private router : Router) { }
 
   ngOnInit() {
     this.data = this.db.list('/users');
+    // this.router.navigate(['/admin/orders'])
   }
 
   getData() : Observable<any>{

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProduktServisService } from '../produkt-servis.service';
 import { ProductInterface } from '../produkty/productInterface';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-base',
@@ -9,6 +11,9 @@ import { AngularFireDatabase } from 'angularfire2/database';
   styleUrls: ['./product-base.component.css']
 })
 export class ProductBaseComponent implements OnInit {
+
+  permissionTo : string = "admin"
+  currentPermission : string
 
   products : ProductInterface[];
   seen : string;
@@ -24,19 +29,29 @@ export class ProductBaseComponent implements OnInit {
   changeDesc : string;
   changeImg : string;
 
-  newChangeName : string;
-  newChangeCount : number;
-  newChangePrice : number;
-  newChangeDesc : string;
-  newChangeImg : string;
+  newChangeName : string = '';
+  newChangeCount : number = 0;
+  newChangePrice : number = 0.0;
+  newChangeDesc : string = '';
+  newChangeImg : string = '';
+
+  info : string = ''
 
   constructor(private productService : ProduktServisService,
-    private db : AngularFireDatabase ) { }
+    private db : AngularFireDatabase,
+    private authService : AuthService,
+    private router : Router ) { }
 
   ngOnInit() {
-    this.productService.getProducts().subscribe(
-      anwser => this.products = anwser
-    )
+
+    this.currentPermission = this.authService.role;
+    if(this.currentPermission !== this.permissionTo){
+      this.router.navigate(['admin/notFound']);
+    }else{
+      this.productService.getProducts().subscribe(
+        anwser => this.products = anwser
+      )
+    }
   }
 
   // checkIfSeen(name : string){
@@ -80,6 +95,13 @@ export class ProductBaseComponent implements OnInit {
   }
 
   addNewProduct(){
+
+    if(
+      this.newChangeName === '' ||
+      this.newChangeDesc === '' ||
+      this.newChangeImg === ''
+    ){ console.log("ZLE"); this.info = "Błędnie wypełnione dane!"; return }
+
     let product : ProductInterface = {
       id: this.db.createPushId(),
       name: this.newChangeName,
@@ -88,7 +110,15 @@ export class ProductBaseComponent implements OnInit {
       description: this.newChangeDesc,
       img: this.newChangeImg
     }  
+
     this.db.object('/products/' + product.id).update(product)
+
+    this.newChangeName = '';
+    this.newChangeCount = 0;
+    this.newChangePrice = 0.0;
+    this.newChangeDesc = '';
+    this.newChangeImg = '';
+    this.info = ''
   }
 
   deleteProduct(product : ProductInterface){

@@ -1,0 +1,124 @@
+<div class="container bg-white">
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Imię: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div>
+        {{order.name}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Nazwisko: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div>
+        {{order.surname}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Adres: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div>
+        {{order.address}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Email: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div>
+        {{order.email}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Status: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div>
+        {{order.status}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Data przyjścia: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div>
+        {{order.dataIn}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Data wysyłki: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div>
+        {{order.dataOut}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 text-right">
+      <div>
+        Produkty: 
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="container">
+        <div class="row">
+          <div class="col-5">
+            Nazwa
+          </div>
+          <div class="col-5">
+            Ilość
+          </div>
+          <div class="col-2" *ngIf="order.status !== 'zrealizowane'">
+            
+          </div>
+        </div>
+        <div class="row" *ngFor="let product of order.products; let i = index">
+          <div class="col-md-5">
+            {{product.name}}
+          </div>
+          <div class="col-md-5">
+              {{product.count}}
+          </div>
+          <div class="col-md-2" *ngIf="order.status !== 'zrealizowane'">
+            <input type="checkbox" [(ngModel)]=order.productsStatus[i].isReady>
+          </div>
+        </div>
+        <div class="row" *ngIf="order.status !== 'zrealizowane'">
+          <button class="btn btn-primary" (click)=selectAll()>Zaznacz wszystkie</button>
+          <button class="btn btn-primary" (click)=deselectAll()>Odznacz wszystkie</button>
+          <button class="btn btn-primary" (click)=saveChanges()>Zapisz zmiany</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

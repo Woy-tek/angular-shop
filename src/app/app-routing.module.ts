@@ -10,6 +10,7 @@ import { AuthGuard } from './authGuard';
 import { ClientSiteComponent } from './client-site/client-site.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ProductBaseComponent } from './product-base/product-base.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const routes: Routes = [
   { path: '', component: ClientSiteComponent,
@@ -24,7 +25,8 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent,  canActivate: [AuthGuard],
     children: [
       { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] },
-      { path: 'productBase', component:ProductBaseComponent, canActivate: [AuthGuard]}
+      { path: 'productBase', component:ProductBaseComponent, canActivate: [AuthGuard]},
+      { path: 'notFound', component:PageNotFoundComponent }
     ]
   }
 

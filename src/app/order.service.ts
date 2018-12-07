@@ -1,22 +1,72 @@
 import { Injectable } from '@angular/core';
-import { Order } from './potwierdzenie/potwierdzenie.component';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { ProductInterface } from './produkty/productInterface';
+
+export interface ProductStatus{
+  id : string,
+  isReady: boolean
+}
+
+export interface Order{
+  id: string,
+  name: string,
+  surname: string,
+  address: string,
+  email: string,
+  status: string,
+  dataIn: string,
+  dataOut: string,
+  products : ProductInterface[],
+  productsStatus: ProductStatus[]
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
 
-  currentOrder : Order;
-  orders : Order[];
+  orders : Order[] = [];
 
-  constructor() { }
+  constructor(private db : AngularFireDatabase) { }
 
   getOrders(){
-    this.orders = [];
+    return this.db.list('/orders').valueChanges()
   }
 
   addOrder(order : Order){
+    order.id = this.db.createPushId();
+    this.db.object('/orders/' + order.id).update(order)
+  }
 
+  updateOrder(order : Order){
+    this.db.object('/orders/' + order.id).update(order)
+  }
+
+  deleteOrder(order : Order){
+    this.db.object('/orders/' + order.id).remove()
+  }
+
+  getData() : string{
+    let date = new Date();
+    return (date.getDay()+2) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()
+      + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+  }
+
+  setProductStatus(products : ProductInterface[]) : ProductStatus[]{
+    let result = []
+    products.forEach(
+      product => {
+
+        let s : ProductStatus = {
+          id: product.id,
+          isReady: false
+        } 
+
+        result.push(s)
+      }
+    )
+
+    return result
   }
 
 }

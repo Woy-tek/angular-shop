@@ -4,6 +4,7 @@ import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from
 import { Observable } from "rxjs";
 import { map } from 'rxjs/operators'
 import { AngularFireDatabase } from "angularfire2/database";
+import { MessageRoleService } from "./message-role.service";
 
 export interface UserData{
     email: string,
@@ -18,7 +19,8 @@ export class AuthGuard implements CanActivate{
     constructor(
         private authService: AuthService,
         private router : Router,
-        private db : AngularFireDatabase
+        private db : AngularFireDatabase,
+        private messageService : MessageRoleService
     ){}
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot)
@@ -30,6 +32,7 @@ export class AuthGuard implements CanActivate{
                         users => {
                             this.authService.role = users.filter( a => (<UserData>a).email === state.email).map(a => (<UserData>a).role)[0];
                             // console.log("ROLE: " + this.authService.role);
+                            this.messageService.sendMessage(this.authService.role)
                         }
                     );
 

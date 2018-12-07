@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container" *ngIf="this.currentPermission === this.permissionTo">
   <h3>Baza produktów</h3>
   <!-- <button (click)=sortProductsByPrice()>SortujCena</button>
   <button (click)=sortProductsByName()>SortujNazwa</button>
   <button (click)=sortProductsByCount()>SortujIlość</button> -->
-  <div class="row">
+  <div class="row" >
     <div class="col-12">
       <table class="table bg-white">
         <thead>
@@ -75,6 +75,9 @@
           </tr>
         </tbody>
       </table>
+      <div class="container">
+        <div class="text-center">{{info}}</div>
+      </div>
     </div>
   </div>
   <!-- <table class="table bg-white">
@@ -108,5 +111,10 @@
       <a routerLink="/confirm"><button class="btn btn-primary">Złóż zamówienie</button></a> -->
 
     </p>  
+  </div>
+</div>
+<div class="container">
+  <div *ngIf="this.currentPermission !== this.permissionTo" class="text-center">
+  <h1>NIE MASZ UPRAWNIEŃ DO PRZEGLĄDANIA TEJ STRONY</h1>
   </div>
 </div>

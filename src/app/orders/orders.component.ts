@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
+import { OrderService, Order } from '../order.service';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 @Component({
   selector: 'app-orders',
@@ -9,16 +11,59 @@ import { Router } from '@angular/router';
 })
 export class OrdersComponent implements OnInit {
 
-  permissionTo : string = 'worker'
-  currentPermission : string
+  orders : Order[]
+  order : Order
 
-  constructor(private authService : AuthService, private router : Router) { }
+  filter : string = ''
+
+  constructor(
+    private orderService : OrderService,
+    private db : AngularFireDatabase) { }
 
   ngOnInit() {
-    this.currentPermission = this.authService.role;
-    if(this.currentPermission !== this.permissionTo){
-      this.router.navigate(['/login']);
+    this.order = {
+      id: '',
+      name: '',
+      surname: '',
+      address: '',
+      email: '',
+      status: '',
+      dataIn: '',
+      dataOut: '',
+      products: [],
+      productsStatus: []
     }
+    this.db.list('/orders').valueChanges().subscribe(
+      data => {
+        this.orders = <Order[]>data;
+        // this.order = this.orders[0]
+      }
+    )
+  }
+
+  setOrder(order : Order){
+    this.order = order
+  }
+
+  updateOrder(order : Order){
+    if(order.status === 'zrealizowane') order.dataOut = this.orderService.getData()
+    this.orderService.updateOrder(order)
+  }
+
+  filterWaitings(){
+    this.filter = 'oczekujące'
+  }
+
+  filterInProgress(){
+    this.filter = 'w trakcie realizacji'
+  }
+
+  filterDone(){
+    this.filter = 'zrealizowane'
+  }
+
+  resetFilter(){
+    this.filter = ''
   }
 
 }

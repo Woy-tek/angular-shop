@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Router } from '@angular/router';
+import { MessageRoleService } from '../message-role.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,8 @@ export class LoginComponent implements OnInit {
 
   constructor(private auth : AuthService, 
     private db : AngularFireDatabase,
-    private router : Router) { }
+    private router : Router,
+    private messageService : MessageRoleService) { }
 
   ngOnInit() {
   }
@@ -38,7 +40,7 @@ export class LoginComponent implements OnInit {
     this.auth.login({email: this.login, password: this.password}).then(
       fulfilled => {
             this.info = "OK"
-            this.router.navigate(['/admin'])
+            this.router.navigate(['/admin/orders'])
           }, rejected => {
             this.info = rejected.message;
           }

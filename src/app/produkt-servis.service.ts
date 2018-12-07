@@ -23,6 +23,7 @@ export class ProduktServisService {
 
   products : Observable<ProductInterface[]>;
   cart : ProductInterface[] = [];
+  // productsObj : ProductInterface[] = []
 
   // productList : Observable<any[]>;
 
@@ -31,6 +32,11 @@ export class ProduktServisService {
     this.data = this.db.list<ProductInterface>(this.url);
     this.products = this.getFireBaseProducts();
     // this.getFirebaseKeys();
+    // this.products.subscribe(
+    //   data => {
+    //     this.productsObj = data
+    //   }
+    // )
   }
 
   //------------------FIREBASE
@@ -160,6 +166,19 @@ export class ProduktServisService {
     this.deleteSingleProduct(product,this.cart)
     // this.addProduct(product,this.products)
   }
+
+  clearCart(){
+    this.cart = []
+  }
+
+  // increaseOnShutDown(){
+  //   this.cart.forEach(
+  //     product => {
+  //       let p = this.productsObj.filter(t => t.id === product.id)[0]
+  //       this.db.object('/products/' + product.id).update({count: product.count})
+  //     }
+  //   )
+  // }
 
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

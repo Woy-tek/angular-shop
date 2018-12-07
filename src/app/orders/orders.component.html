@@ -1,3 +1,63 @@
-<p *ngIf='permissionTo === currentPermission'>
-  orders works!
-</p>
+<p></p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-7">
+      <app-order [order]=order (update)=updateOrder($event)></app-order>
+    </div>
+    <div class="col-md-5">
+      <!-- <div class="row" *ngFor="let o of orders" (click)=setOrder(o)>
+        <div class="col-3">
+          {{o.name}}
+        </div>
+        <div class="col-3">
+          {{o.surname}}
+        </div>
+        <div class="col-3">
+          {{o.dataIn}}
+        </div>
+        <div class="col-3">
+          {{o.status}}
+        </div>
+      </div> -->
+      <div class="row text-center">
+        <div class="col-3"></div>
+        <div class="col-6">
+          <h2>ZAMÓWIENIA</h2>
+        </div>
+        <div class="col-3"></div>
+      </div>
+      <div class="row text-center">
+        <div class="col-3">
+          <button class="btn btn-primary" (click)=filterWaitings()>Oczekujące</button>
+        </div>
+        <div class="col-3">
+          <button class="btn btn-primary" (click)=filterInProgress()>W trakcie</button>
+        </div>
+        <div class="col-3">
+          <button class="btn btn-primary" (click)=filterDone()>Zrealizowane</button>
+        </div>
+        <div class="col-3">
+          <button class="btn btn-primary" (click)=resetFilter()>Wszystkie</button>
+        </div>
+      </div>
+      <table class="table table-sm table-hover bg-white text-center">
+        <thead>
+         <tr>
+            <th scope="col">Imię</th>
+            <th scope="col">Nazwisko</th>
+            <th scope="col">Data przyjęcia</th>
+            <th scope="col">Status</th>
+         </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of orders" (click)=setOrder(o)>
+            <td *ngIf="o.status === filter || filter === ''" >{{o.name}}</td>
+            <td *ngIf="o.status === filter || filter === ''" >{{o.surname}}</td>
+            <td *ngIf="o.status === filter || filter === ''" >{{o.dataIn}}</td>
+            <td *ngIf="o.status === filter || filter === ''" >{{o.status}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
