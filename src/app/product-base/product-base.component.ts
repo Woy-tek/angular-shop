@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProduktServisService } from '../produkt-servis.service';
 import { ProductInterface } from '../produkty/productInterface';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 @Component({
   selector: 'app-product-base',
@@ -12,12 +13,25 @@ export class ProductBaseComponent implements OnInit {
   products : ProductInterface[];
   seen : string;
 
+  sortByPrice : boolean = false;
+  sortByName : boolean = false;
+  sortByCount : boolean = false;
+
+  productId : string;
   changeName : string;
   changeCount : number;
   changePrice : number;
   changeDesc : string;
+  changeImg : string;
 
-  constructor(private productService : ProduktServisService ) { }
+  newChangeName : string;
+  newChangeCount : number;
+  newChangePrice : number;
+  newChangeDesc : string;
+  newChangeImg : string;
+
+  constructor(private productService : ProduktServisService,
+    private db : AngularFireDatabase ) { }
 
   ngOnInit() {
     this.productService.getProducts().subscribe(
@@ -36,15 +50,73 @@ export class ProductBaseComponent implements OnInit {
     this.changeCount = product.count;
     this.changePrice = product.price;
     this.changeDesc = product.description;
+    this.changeImg = product.img;
+    this.productId = product.id;
 
   }
 
   confirmChanges(product : ProductInterface){
     this.seen = '';
+    let p : ProductInterface = 
+    {
+      id: this.productId,
+      name: this.changeName,
+      price: +this.changePrice,
+      count: +this.changeCount,
+      description: this.changeDesc,
+      img: this.changeImg
+    }
+    this.db.object('/products/' + this.productId).update(p)
   }
 
   comeBack(){
     this.seen = '';
+    this.changeName = '';
+    this.changeCount = 0;
+    this.changePrice = 0.0;
+    this.changeDesc = '';
+    this.changeImg = '';
+    this.productId = '';
+  }
+
+  addNewProduct(){
+    let product : ProductInterface = {
+      id: this.db.createPushId(),
+      name: this.newChangeName,
+      price: +this.newChangePrice,
+      count: +this.newChangeCount,
+      description: this.newChangeDesc,
+      img: this.newChangeImg
+    }  
+    this.db.object('/products/' + product.id).update(product)
+  }
+
+  deleteProduct(product : ProductInterface){
+    this.db.object('/products/' + product.id).remove()
+  }
+
+  sortProductsByPrice(){
+    this.sortByPrice = !this.sortByPrice
+    if(this.sortByPrice)
+      this.products.sort( (p1,p2) => p2.price - p1.price )
+    else
+      this.products.sort( (p1,p2) => p1.price - p2.price )
+  }
+
+  sortProductsByName(){
+    this.sortByName = !this.sortByName
+    if(this.sortByName)
+      this.products.sort( (p1,p2) => 0 - (p2.name > p1.name ? 1 : -1) )
+    else
+      this.products.sort( (p1,p2) => 0 - (p1.name > p2.name ? 1 : -1) )
+  }
+
+  sortProductsByCount(){
+    this.sortByCount = !this.sortByCount
+    if(this.sortByCount)
+      this.products.sort( (p1,p2) => 0 - (p2.count > p1.count ? 1 : -1) )
+    else
+      this.products.sort( (p1,p2) => 0 - (p1.count > p2.count ? 1 : -1) )
   }
 
 }

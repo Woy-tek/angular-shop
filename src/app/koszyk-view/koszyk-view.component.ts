@@ -24,14 +24,16 @@ export class KoszykViewComponent implements OnInit, OnDestroy {
     this.subscription = this.messageService.getMessage().subscribe(message => {
 
       var product = message;
-      console.log(product);
+      // console.log(product);
 
       if(product.price < 0){
         this.count--;
+        // console.log("AAA : " + typeof(product.price) + " " + typeof(this.sum))
         this.sum += product.price;
         product.price = (-1)*product.price;
       }else{
         this.count++;
+        // console.log("BBB : " + typeof(product.price) + " " + typeof(this.sum))
         this.sum += message.price;
       }
     });

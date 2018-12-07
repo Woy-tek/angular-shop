@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryDataService } from './in-memory-data.service';
+// import { InMemoryDataService } from './in-memory-data.service';
 // import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -28,6 +28,8 @@ import { ProductBaseComponent } from './product-base/product-base.component';
 import { ClientSiteComponent } from './client-site/client-site.component'; 
 import { OrderService } from './order.service';
 import { EditProductComponent } from './product-base/edit-product/edit-product.component';
+import { FirebaseActionsComponent } from './firebase-actions/firebase-actions.component';
+import { FirebaseServiceService } from './firebase-service.service';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,8 @@ import { EditProductComponent } from './product-base/edit-product/edit-product.c
     OrdersComponent,
     ProductBaseComponent,
     ClientSiteComponent,
-    EditProductComponent
+    EditProductComponent,
+    FirebaseActionsComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -53,15 +56,15 @@ import { EditProductComponent } from './product-base/edit-product/edit-product.c
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, {dataEncapsulation: false}
-    ),
+    // HttpClientInMemoryWebApiModule.forRoot(
+    //   InMemoryDataService, {dataEncapsulation: false}
+    // ),
     // NgbModule,
     // NgbModule.forRoot()
     AngularFireAuthModule,
     AngularFireDatabaseModule
   ],
-  providers: [ProduktServisService, OrderService],
+  providers: [ProduktServisService, OrderService, FirebaseServiceService],
   bootstrap: [HelloComponent]
 })
 export class MainModule { }

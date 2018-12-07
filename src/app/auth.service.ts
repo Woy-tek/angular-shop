@@ -14,6 +14,7 @@ export interface Credentials{
 export class AuthService {
 
   readonly authState$:Observable<User | null> = this.fireAuth.authState;
+  role : string = '';
 
   constructor(private fireAuth : AngularFireAuth) { }
 

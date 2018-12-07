@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +15,9 @@ export class LoginComponent implements OnInit {
 
   info : string;
 
-  constructor(private auth : AuthService) { }
+  constructor(private auth : AuthService, 
+    private db : AngularFireDatabase,
+    private router : Router) { }
 
   ngOnInit() {
   }
@@ -22,7 +26,8 @@ export class LoginComponent implements OnInit {
     // this.auth.login({email: this.login, password: this.password});
     this.auth.register({email: this.login, password: this.password}).then(
       fulfilled => {
-        this.info = "OK"
+        this.info = "Rejestracja zakończona sukcesem.\nMożna się zalogować"
+        this.addUser(this.login)
       }, rejected => {
         this.info = rejected.message;
       }
@@ -33,6 +38,7 @@ export class LoginComponent implements OnInit {
     this.auth.login({email: this.login, password: this.password}).then(
       fulfilled => {
             this.info = "OK"
+            this.router.navigate(['/admin'])
           }, rejected => {
             this.info = rejected.message;
           }
@@ -44,6 +50,23 @@ export class LoginComponent implements OnInit {
     //     this.info = rejected.message;
     //   }
     // )
+
+    
+  }
+
+  add(){
+    this.addUser('woy181@wp.pl');
+  }
+
+  addUser(name : string){
+    let u = {
+      id: this.db.createPushId(),
+      email: name,
+      role: 'worker'
+    }
+
+    this.db.object('/users/' + u.id).update(u);
+
   }
 
 }

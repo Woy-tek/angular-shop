@@ -1,0 +1,15 @@
+<p>
+  firebase-actions works!
+</p>
+<div> 
+  <ul>
+    {{product.id}} <br>
+    {{product.name}} <br>
+    {{product.price}}
+    <li *ngFor="let product of products">
+      AAA {{product.name}} {{product.price}} {{product}} <button (click)=update(product)>Update</button>
+      <button (click)=get(product)>GET</button>
+    </li>
+  </ul>
+  <button (click)=add()>Dodaj</button>
+</div>

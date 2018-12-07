@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-orders',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrdersComponent implements OnInit {
 
-  constructor() { }
+  permissionTo : string = 'worker'
+  currentPermission : string
+
+  constructor(private authService : AuthService, private router : Router) { }
 
   ngOnInit() {
+    this.currentPermission = this.authService.role;
+    if(this.currentPermission !== this.permissionTo){
+      this.router.navigate(['/login']);
+    }
   }
 
 }

@@ -3,6 +3,7 @@ import { ProductInterface } from './produkty/productInterface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 
 
 @Injectable({
@@ -10,54 +11,92 @@ import { catchError, map, tap } from 'rxjs/operators';
 })
 export class ProduktServisService {
 
+  private url = '/products';
+
   private productsUrl = 'api/products';
   private httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   }
 
+  data : AngularFireList<ProductInterface>;
+  // productKeys : any[];
+
   products : Observable<ProductInterface[]>;
   cart : ProductInterface[] = [];
 
-  constructor(private http: HttpClient) {
-    this.products = this.getInMemoryData();
+  // productList : Observable<any[]>;
+
+  constructor(private http: HttpClient, private db : AngularFireDatabase) {
+    // this.products = this.getInMemoryData();
+    this.data = this.db.list<ProductInterface>(this.url);
+    this.products = this.getFireBaseProducts();
+    // this.getFirebaseKeys();
   }
+
+  //------------------FIREBASE
+
+  getFireBaseProducts() : Observable<ProductInterface[]>{
+    return this.data.valueChanges();
+  }
+
+  // getFirebaseKeys(){
+
+  //   this.data.snapshotChanges().subscribe(
+  //     table => {
+  //       this.productKeys = [];
+  //       table.forEach(
+  //         product => {
+  //           this.productKeys.push(
+  //             {
+  //               name: product.payload.val().name,
+  //               key: product.payload.key
+  //             }
+  //           )
+  //         }
+  //       )
+  //     }
+  //   )
+  // }
+
+  // getKey(name : string){
+  //   this.productKeys.forEach(
+  //     a => {
+  //       if(a.name === name) return a.key;
+  //     }
+  //   )
+  // }
+
+  // getFireBaseProduct(name : string) : Observable<ProductInterface>{
+  //   return this.db.object<ProductInterface>(this.url + this.getKey(name)).valueChanges();
+  // }
+
+  //------------------ /FIREBASE
 
   getInMemoryData() : Observable<ProductInterface[]> {
     return this.http.get<ProductInterface[]>(this.productsUrl);
   }
-
-  // getDataFromFile(){
-  //   this.copyTable(fakeProducts);
-  // }
-
-  // copyTable(tab : ProductInterface[]){
-  //   tab.forEach(element => {
-  //     this.products.push(element);
-  //   });
-  // }
 
   getProducts() : Observable<ProductInterface[]> {
     return this.products;
   }
 
   getProduct(id : number) : Observable<ProductInterface> {
-    const url = this.productsUrl + '/' + id;
-    return this.http.get<ProductInterface>(url).pipe(
-      tap(_ => console.log(`fetched product id=${id}`)),
-      catchError(this.handleError<ProductInterface>(`getProduct id=${id}`))
-    );
+
+    return this.db.object<ProductInterface>(this.url + '/' + id).valueChanges();
+    
+    // const url = this.productsUrl + '/' + id;
+    // return this.http.get<ProductInterface>(url).pipe(
+    //   tap(_ => console.log(`fetched product id=${id}`)),
+    //   catchError(this.handleError<ProductInterface>(`getProduct id=${id}`))
+    // );
   }
 
-  // getProduct(name : string, tab : ProductInterface[]) : ProductInterface{
-  //   return tab.find(t => t.name == name);
+  // addProduct (product: ProductInterface): Observable<ProductInterface> {
+  //   return this.http.post<ProductInterface>(this.productsUrl, product, this.httpOptions).pipe(
+  //     tap((product: ProductInterface) => console.log('added hero w/ id=${product.id}')),
+  //     catchError(this.handleError<ProductInterface>('addProduct'))
+  //   );
   // }
-
-  addProduct (product: ProductInterface): Observable<ProductInterface> {
-    return this.http.post<ProductInterface>(this.productsUrl, product, this.httpOptions).pipe(
-      tap((product: ProductInterface) => console.log('added hero w/ id=${product.id}')),
-      catchError(this.handleError<ProductInterface>('addProduct'))
-    );
-  }
 
   addProductToTable(product : ProductInterface, tab : ProductInterface[]) : ProductInterface[]{
     let i = tab.findIndex(t => t.name == product.name);
@@ -65,27 +104,33 @@ export class ProduktServisService {
       tab[i].count++;
     }
     else tab.push(product);
-    // this.cart.forEach(
-    //   element => console.log(element.name)
-    // )
+
     return tab;
   }
 
-  updateProduct (product: ProductInterface): Observable<any> {
-    return this.http.put(this.productsUrl, product, this.httpOptions).pipe(
-      tap(_ => console.log(`updated product id=${product.id}`)),
-      catchError(this.handleError<any>('updateProduct'))
-    );
+  updateProduct (product: ProductInterface): Promise<any> {
+
+    return this.db.object(this.url + '/' + product.id)
+      .update(product);
+
+    // return this.http.put(this.productsUrl, product, this.httpOptions).pipe(
+    //   tap(_ => console.log(`updated product id=${product.id}`)),
+    //   catchError(this.handleError<any>('updateProduct'))
+    // );
   }
 
-  deleteProduct (product: ProductInterface | number): Observable<ProductInterface> {
-    const id = typeof product === 'number' ? product : product.id;
-    const url = `${this.productsUrl}/${id}`;
+  deleteProduct (product: ProductInterface): Promise<any> {
+    
+    return this.db.object(this.url + '/' + product.id)
+    .remove();
+    
+    // const id = typeof product === 'number' ? product : product.id;
+    // const url = `${this.productsUrl}/${id}`;
  
-    return this.http.delete<ProductInterface>(url, this.httpOptions).pipe(
-      tap(_ => console.log(`deleted product id=${id}`)),
-      catchError(this.handleError<ProductInterface>('deleteProduct'))
-    );
+    // return this.http.delete<ProductInterface>(url, this.httpOptions).pipe(
+    //   tap(_ => console.log(`deleted product id=${id}`)),
+    //   catchError(this.handleError<ProductInterface>('deleteProduct'))
+    // );
   }
 
   deleteSingleProduct(product : ProductInterface, tab : ProductInterface[]) : ProductInterface[]{

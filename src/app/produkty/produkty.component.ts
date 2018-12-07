@@ -4,6 +4,8 @@ import { ProduktServisService } from '../produkt-servis.service';
 import { KoszykComponent } from '../koszyk/koszyk.component';
 import { PagesService } from '../pages.service';
 import { element } from '@angular/core/src/render3';
+import { Observable } from 'rxjs';
+import { findIndex } from 'rxjs/operators';
 
 @Component({
   selector: 'hello-produkty',
@@ -28,7 +30,7 @@ export class ProduktyComponent implements OnInit {
   checkbox2 : boolean = false;
   checkbox3 : boolean = false;
 
-  // napis : string = "";
+  obj : Observable<ProductInterface>;
 
   constructor(private productsService : ProduktServisService, private pagesService : PagesService) { 
     // this.napis = this.productsService.napis;
@@ -38,6 +40,14 @@ export class ProduktyComponent implements OnInit {
   ngOnInit() {
     this.getProducts();
   }
+
+  // aaa(){
+  //   // this.obj = this.productsService.getFireBaseProduct("Pomidor");
+  // }
+
+  // bbb(){
+  //   console.log(this.obj);
+  // }
 
   getProducts() : void {
     this.productsService.getProducts().subscribe(
@@ -73,11 +83,13 @@ export class ProduktyComponent implements OnInit {
       img: product.img
     }
 
-    this.productsService.updateProduct(p).subscribe(
-      product => {
-        this.getProducts();
-      }
-    )
+    this.productsService.updateProduct(p)
+    // .then(
+    //   product => {
+    //     console.log('AAA');
+    //     this.getProducts();
+    //   }
+    // )
     p.count = 1;
     this.productsService.addToCart(p);
     // this.productsService.getProduct(p.id).subscribe(
@@ -143,13 +155,28 @@ export class ProduktyComponent implements OnInit {
 
   filteringTab(tab : ProductInterface[], min : number, max : number){
     let resultTab = [];
-    tab.forEach(element => {
-      if(element.price >= min && element.price <= max){
-        this.filterTab.forEach(e => {
-          if(e == element.description) resultTab.push(element);
-        })
-      }
-    })
+    if(this.filterTab.length == 0){
+      tab.forEach(element => {
+        if(element.price >= min && element.price <= max){
+          let i = resultTab.findIndex(t => t.name === element.name);
+          if(i < 0) resultTab.push(element);
+        }
+      })
+    }else{
+      tab.forEach(element => {
+        if(element.price >= min && element.price <= max){
+          // console.log('AAA: ' + element)
+          this.filterTab.forEach(e => {
+            if((element.description.toLowerCase().indexOf(e.toLowerCase()) > -1) ){
+              // console.log(e + " " + element.name)
+              let i = resultTab.findIndex(t => t.name === element.name);
+              if(i < 0) resultTab.push(element);
+            }
+            // if(e == element.description) resultTab.push(element);
+          })
+        }
+      })
+    }
 
     return resultTab;
   }
@@ -203,11 +230,11 @@ export class ProduktyComponent implements OnInit {
 
   getDescriptions(){
     this.filterTab = []
-    this.products.forEach(element => {
-        let i = this.filterTab.findIndex(t => t == element.description);
-        if(i < 0 ) this.filterTab.push(element.description);
-      }
-    )
+    // this.products.forEach(element => {
+    //     let i = this.filterTab.findIndex(t => t == element.description);
+    //     if(i < 0 ) this.filterTab.push(element.description);
+    //   }
+    // )
   }
 
   getCart() : ProductInterface[]{

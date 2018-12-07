@@ -1,10 +1,14 @@
 <div class="container">
   <h3>Baza produktów</h3>
+  <!-- <button (click)=sortProductsByPrice()>SortujCena</button>
+  <button (click)=sortProductsByName()>SortujNazwa</button>
+  <button (click)=sortProductsByCount()>SortujIlość</button> -->
   <div class="row">
     <div class="col-12">
       <table class="table bg-white">
         <thead>
             <tr>
+              <th scope="col">Zdjęcie</th>
               <th scope="col">Nazwa</th>
               <th scope="col">Ilość</th>
               <th scope="col">Cena za sztukę</th>
@@ -13,31 +17,62 @@
             </tr>
         </thead>
         <tbody>
+          <tr>
+            <td></td>
+            <td><button class="btn btn-warning" (click)=sortProductsByName()>Sortuj</button></td>
+            <td><button class="btn btn-warning" (click)=sortProductsByCount()>Sortuj</button></td>
+            <td><button class="btn btn-warning" (click)=sortProductsByPrice()>Sortuj</button></td>
+            <td></td>
+            <td></td>
+          </tr>
           <ng-container *ngFor="let c of products; let i = index" >
             <tr>
+                <td><img src="{{c.img}}" alt="zdj" class="img-fluid img-responsive rounded-circle"></td>
                 <td>{{c.name}}</td>
                 <td>{{c.count}}</td>
                 <td>{{c.price | currency}}</td>
                 <td>{{c.description}}</td>
                 <td>
                     <button class="btn btn-primary" (click)="editProduct(c)">Edytuj</button>
+                    <button class="btn btn-warning" (click)="deleteProduct(c)">Usuń</button>
                   <!-- <button class="btn btn-warning" (click)="deleteProduct(c)">Usuń z koszyka</button> -->
                 </td>
             </tr>
             <!-- <app-edit-product [product]=c ></app-edit-product> -->
             <tr *ngIf="seen === c.name">
                 <!-- <div class="col-12"> -->
+                  <td><input type="text" [(ngModel)]=changeImg></td>
                   <td><input type="text" [(ngModel)]=changeName></td>
                   <td><input type="text" [(ngModel)]=changeCount></td>
                   <td><input type="text" [(ngModel)]=changePrice></td>
                   <td><input type="text" [(ngModel)]=changeDesc></td>
                   <td>
-                    <button class="btn btn-primary" (click)="confirmChanges(c)">Zatwierdź</button>
+                    <button class="btn btn-primary" (click)="confirmChanges(c)">Zmień</button>
                     <button class="btn btn-warning" (click)="comeBack()">Wróć</button>
                   </td>
                 <!-- </div> -->
             </tr>
           </ng-container>
+          <tr>
+              <td><input type="text" [(ngModel)]=newChangeImg></td>
+              <td><input type="text" [(ngModel)]=newChangeName></td>
+              <td><input type="text" [(ngModel)]=newChangeCount></td>
+              <td><input type="text" [(ngModel)]=newChangePrice></td>
+              <td><input type="text" [(ngModel)]=newChangeDesc></td>
+              <td>
+                <button class="btn btn-primary" (click)="addNewProduct()">Dodaj</button>
+              </td>
+          </tr>
+          <tr class="text-center font-weight-bold">
+              <td>Zdjęcie</td>
+              <td>Nazwa</td>
+              <td>Ilość</td>
+              <td>Cena</td>
+              <td>Opis</td>
+              <td>
+                <!-- <button class="btn btn-primary" (click)="addNewProduct()">Dodaj</button> -->
+              </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -69,8 +104,8 @@
     <p>
       <!-- Ilość: {{count}} <br>
       Suma: {{sum | currency}}<br> -->
-      <a routerLink="/products"> <button class="btn btn-primary">Wróć do zakupów</button> </a>
-      <a routerLink="/confirm"><button class="btn btn-primary">Złóż zamówienie</button></a>
+      <!-- <a routerLink="/products"> <button class="btn btn-primary">Wróć do zakupów</button> </a>
+      <a routerLink="/confirm"><button class="btn btn-primary">Złóż zamówienie</button></a> -->
 
     </p>  
   </div>

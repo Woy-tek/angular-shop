@@ -1,14 +1,17 @@
 
+
+<!-- <button (click)=aaa()>AAA</button><button (click)=bbb()>BBB</button>{{obj}}
+<app-firebase-actions></app-firebase-actions> -->
 <div class="container bg-secondary">
   <div class="row">
     <div class="col-12 text-white">
       <div class="btn-group-toggle float-left col-lg-6 col-sm-12">
           
-          <input type="checkbox" [(ngModel)]='checkbox1' (change)="doFiltering('Dobry')"> Kategoria 'Dobry'
+          <input type="checkbox" [(ngModel)]='checkbox1' (change)="doFiltering('zdrowa')"> Kategoria 'Zdrowa'
         <br>
-          <input type="checkbox" [(ngModel)]='checkbox2' (change)="doFiltering('Bardzo Dobry')"> Kategoria 'Bardzo Dobry'
+          <input type="checkbox" [(ngModel)]='checkbox2' (change)="doFiltering('smaczny')"> Kategoria 'Smaczny'
         <br>
-          <input type="checkbox" [(ngModel)]='checkbox3' (change)="doFiltering('Nie Dobry')"> Kategoria 'Nie Dobry'
+          <input type="checkbox" [(ngModel)]='checkbox3' (change)="doFiltering('niesmaczny')"> Kategoria 'Niesmaczny'
         <br>
       </div>
         <!-- <ul>

@@ -21,10 +21,10 @@ const routes: Routes = [
     ]
   },
   { path: 'login', component: LoginComponent},
-  { path: 'admin', component: AdminComponent, //, canActivate: [AuthGuard]}
+  { path: 'admin', component: AdminComponent,  canActivate: [AuthGuard],
     children: [
-      { path: 'orders', component: OrdersComponent },
-      { path: 'productBase', component:ProductBaseComponent}
+      { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] },
+      { path: 'productBase', component:ProductBaseComponent, canActivate: [AuthGuard]}
     ]
   }
 

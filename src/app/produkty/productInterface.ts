@@ -1,6 +1,6 @@
 export interface ProductInterface{
 
-    id : number;
+    id : string;
     name : string;
     count : number;
     price : number;
