@@ -69,8 +69,8 @@ export class KoszykComponent implements OnInit, OnDestroy {
     this.db.object('/products/' + product.id).update(
       {count: p2.count+1}
     )
-    this.messageService.sendMessage(p)
     this.productsService.deleteFromCart(p)
+    this.messageService.sendMessage(p)
     this.updateStats()
     // this.productsService.getProduct(p.id).subscribe(
     //   product => {p.count = product.count + 1;
@@ -97,8 +97,8 @@ export class KoszykComponent implements OnInit, OnDestroy {
     this.db.object('/products/' + product.id).update(
       {count: p.count-1}
     )
-    this.messageService.sendMessage(p2);
     this.productsService.addToCart(p2);
+    this.messageService.sendMessage(p2);
     this.updateStats()
 
     // this.productsService.getProduct(p.id).subscribe(

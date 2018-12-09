@@ -4,6 +4,9 @@ import { ProductInterface } from '../produkty/productInterface';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-product-base',
@@ -15,7 +18,7 @@ export class ProductBaseComponent implements OnInit {
   permissionTo : string = "admin"
   currentPermission : string
 
-  products : ProductInterface[];
+  products : ProductInterface[] = [];
   seen : string;
 
   sortByPrice : boolean = false;
@@ -37,10 +40,15 @@ export class ProductBaseComponent implements OnInit {
 
   info : string = ''
 
+  private httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  }
+
   constructor(private productService : ProduktServisService,
     private db : AngularFireDatabase,
     private authService : AuthService,
-    private router : Router ) { }
+    private router : Router,
+    private http : HttpClient ) { }
 
   ngOnInit() {
 
@@ -48,10 +56,30 @@ export class ProductBaseComponent implements OnInit {
     if(this.currentPermission !== this.permissionTo){
       this.router.navigate(['admin/notFound']);
     }else{
+      if(this.productService.dataSource === 'firebase'){
       this.productService.getProducts().subscribe(
         anwser => this.products = anwser
       )
+      }else{
+        this.http.get<ProductInterface[]>('api/products').subscribe(
+          anwser => {
+            // console.log(anwser)
+            this.products = []
+            anwser.forEach(
+              product => {
+                // console.log(product)
+                this.products.push(product)
+              }
+            )
+          }
+        );
+      }
     }
+  }
+
+  changeBase(){
+    this.productService.changeDataSource();
+    this.ngOnInit()
   }
 
   // checkIfSeen(name : string){
@@ -81,7 +109,17 @@ export class ProductBaseComponent implements OnInit {
       description: this.changeDesc,
       img: this.changeImg
     }
-    this.db.object('/products/' + this.productId).update(p)
+    if(this.productService.dataSource === 'firebase'){
+      this.db.object('/products/' + this.productId).update(p)
+    }else{
+      // console.log('POST')
+      this.http.post<ProductInterface>('api/products',p,this.httpOptions).pipe(
+        tap(_ => console.log(`updated product`))
+        // ,catchError(this.handleError<ProductInterface>("Update product ERROR"))
+      ).subscribe(
+        a => this.ngOnInit()
+      )
+    }
   }
 
   comeBack(){
@@ -111,7 +149,16 @@ export class ProductBaseComponent implements OnInit {
       img: this.newChangeImg
     }  
 
+    if(this.productService.dataSource === 'firebase'){
     this.db.object('/products/' + product.id).update(product)
+    }else{
+      this.http.post<ProductInterface>('api/products',product,this.httpOptions).pipe(
+        tap(_ => console.log(`added product`))
+        // ,catchError(this.handleError<ProductInterface>("Update product ERROR"))
+      ).subscribe(
+        a => this.ngOnInit()
+      )
+    }
 
     this.newChangeName = '';
     this.newChangeCount = 0;
@@ -122,7 +169,16 @@ export class ProductBaseComponent implements OnInit {
   }
 
   deleteProduct(product : ProductInterface){
-    this.db.object('/products/' + product.id).remove()
+    if(this.productService.dataSource === 'firebase'){
+      this.db.object('/products/' + product.id).remove()
+    }else{
+      this.http.delete<ProductInterface>('api/products/' + product.id, this.httpOptions).pipe(
+          tap(_ => console.log(`deleted product`)),
+          catchError(this.handleError<ProductInterface>('deleteProduct'))
+        ).subscribe(
+          () => this.ngOnInit()
+        );
+    }
   }
 
   sortProductsByPrice(){
@@ -147,6 +203,13 @@ export class ProductBaseComponent implements OnInit {
       this.products.sort( (p1,p2) => 0 - (p2.count > p1.count ? 1 : -1) )
     else
       this.products.sort( (p1,p2) => 0 - (p1.count > p2.count ? 1 : -1) )
+  }
+
+  private handleError<T> (operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      return of(result as T);
+    };
   }
 
 }
