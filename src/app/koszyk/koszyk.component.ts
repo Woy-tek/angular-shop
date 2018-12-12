@@ -4,6 +4,9 @@ import { ProduktServisService } from '../produkt-servis.service';
 import { Subscription } from 'rxjs';
 import { MessageServiceService } from '../message-service.service';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Promotion } from '../promotions/promotions.component';
 // import { MessageServiceService } from '../message-service.service';
 
 @Component({
@@ -22,21 +25,53 @@ export class KoszykComponent implements OnInit, OnDestroy {
   napis : string = "";
 
   products : ProductInterface[];
+  promotions: Promotion[];
+
+  private httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  }
 
   // subscription: Subscription;
  
 
-  constructor(private productsService : ProduktServisService, private messageService : MessageServiceService, private db : AngularFireDatabase) { 
+  constructor(private productsService : ProduktServisService, 
+    private messageService : MessageServiceService, 
+    private db : AngularFireDatabase,
+    private http : HttpClient) { 
     this.cart = [];
-    this.db.list<ProductInterface>('/products').valueChanges().subscribe(
-      a => {
-        this.products = a
-      }
-    )
+
     // this.subscription = this.messageService.getMessage().subscribe(message => {this.addToCart(message); console.log(this.cart[this.count].name)});
   }
 
   ngOnInit() {
+
+    if(this.productsService.dataSource === 'firebase'){
+      this.db.list<ProductInterface>('/products').valueChanges().subscribe(
+        a => {
+          this.products = a
+        }
+      )
+      this.db.list<Promotion>('/promotions').valueChanges().subscribe(
+        a => {
+          this.promotions = a
+        }
+      )
+    }else{
+      this.http.get<ProductInterface[]>('api/products').subscribe(
+        anwser => {
+          // console.log(anwser)
+          this.products = []
+          anwser.forEach(
+            product => {
+              // console.log(product)
+              this.products.push(product)
+            }
+          )
+      
+        }
+      )
+    }
+
     this.cart = this.productsService.getCart();
     // this.cart = this.productsService.getProducts();
     this.updateStats()
@@ -66,12 +101,36 @@ export class KoszykComponent implements OnInit, OnDestroy {
       img: product.img
     }// as ProductInterface;
 
-    this.db.object('/products/' + product.id).update(
-      {count: p2.count+1}
-    )
-    this.productsService.deleteFromCart(p)
-    this.messageService.sendMessage(p)
-    this.updateStats()
+    let p3 = {
+      id: product.id,
+      name: product.name,
+      count: p2.count+1,
+      price: product.price,
+      description: product.description,
+      img: product.img
+    }
+
+    if(this.productsService.dataSource === 'firebase'){
+      this.db.object('/products/' + product.id).update(
+        {count: p2.count+1}
+      )
+      this.productsService.deleteFromCart(p)
+      this.messageService.sendMessage(p)
+      this.updateStats()
+    }else{
+      this.http.post<ProductInterface>('api/products',p3,this.httpOptions).pipe(
+        tap(_ => console.log(`deleted product`))
+        // ,catchError(this.handleError<ProductInterface>("Update product ERROR"))
+      ).subscribe(
+        a => {
+          // console.log('CCC')
+        this.ngOnInit();
+        this.productsService.deleteFromCart(p)
+        this.messageService.sendMessage(p)
+        this.updateStats()
+        }
+      )
+    }
     // this.productsService.getProduct(p.id).subscribe(
     //   product => {p.count = product.count + 1;
     //   this.productsService.updateProduct(p).then(
@@ -85,21 +144,79 @@ export class KoszykComponent implements OnInit, OnDestroy {
 
     let p = this.products.filter(a => (a.name === product.name) )[0]
 
-    let p2 =  {
+    let discount = 0;
+    this.promotions.forEach(
+      a => {
+        let d = a.products.filter(pr => pr === p.id)[0];
+        if(d !== undefined && d !== null){
+          discount = a.discount;
+        }
+      }
+    )
+
+    let p2 = {
       id: product.id,
       name: product.name,
       count: 1,
+      price: p.price,
+      description: product.description,
+      img: product.img
+    }
+
+    if(discount !== 0){
+      p2 =  {
+        id: product.id,
+        name: product.name,
+        count: 1,
+        price: ((100-discount)/100) * product.price,
+        description: product.description,
+        img: product.img
+      }// as ProductInterface;
+    }else{
+      p2 =  {
+        id: product.id,
+        name: product.name,
+        count: 1,
+        price: p.price,
+        description: product.description,
+        img: product.img
+      }
+    }
+    // console.log('AAA')
+    let p3 = {
+      id: product.id,
+      name: product.name,
+      count: p.count-1,
       price: product.price,
       description: product.description,
       img: product.img
-    }// as ProductInterface;
+    }
+    // console.log("AB")
 
-    this.db.object('/products/' + product.id).update(
-      {count: p.count-1}
-    )
-    this.productsService.addToCart(p2);
-    this.messageService.sendMessage(p2);
-    this.updateStats()
+    if(this.productsService.dataSource === 'firebase'){
+      this.db.object('/products/' + product.id).update(
+        {count: p.count-1}
+      )
+      this.productsService.addToCart(p2);
+      this.messageService.sendMessage(p2);
+      this.updateStats()
+    }else{
+
+      // console.log('BBB')
+      this.http.post<ProductInterface>('api/products',p3,this.httpOptions).pipe(
+        tap(_ => console.log(`added product`))
+        // ,catchError(this.handleError<ProductInterface>("Update product ERROR"))
+      ).subscribe(
+        a => {
+          // console.log('CCC')
+        this.ngOnInit();
+        this.productsService.addToCart(p2);
+        this.messageService.sendMessage(p2);
+        this.updateStats()
+        }
+      )
+
+    }
 
     // this.productsService.getProduct(p.id).subscribe(
     //   a => {

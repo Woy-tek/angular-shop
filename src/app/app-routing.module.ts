@@ -11,6 +11,7 @@ import { ClientSiteComponent } from './client-site/client-site.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ProductBaseComponent } from './product-base/product-base.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 
 const routes: Routes = [
   { path: '', component: ClientSiteComponent,
@@ -26,7 +27,8 @@ const routes: Routes = [
     children: [
       { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] },
       { path: 'productBase', component:ProductBaseComponent, canActivate: [AuthGuard]},
-      { path: 'notFound', component:PageNotFoundComponent }
+      { path: 'notFound', component:PageNotFoundComponent },
+      { path: 'promotions', component:PromotionsComponent, canActivate: [AuthGuard] }
     ]
   }
 

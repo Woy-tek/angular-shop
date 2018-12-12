@@ -48,7 +48,7 @@ export class OrderService {
 
   getData() : string{
     let date = new Date();
-    return (date.getDay()+2) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()
+    return (date.getDate()) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()
       + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
   }
 

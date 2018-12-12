@@ -4,6 +4,9 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Type } from '@angular/compiler';
 import { ProductInterface } from '../productInterface';
 import { MessageServiceService } from 'src/app/message-service.service';
+import { ProduktServisService } from 'src/app/produkt-servis.service';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { Promotion } from 'src/app/promotions/promotions.component';
 // import { Obj } from './produkty/produkty.component'
 
 @Component({
@@ -18,10 +21,32 @@ export class ProduktComponent implements OnInit {
   @Output() toDelete = new EventEmitter<ProductInterface>();
   @Output() toAddToCart = new EventEmitter<ProductInterface>();
 
-  constructor(private messageService: MessageServiceService) { }
+  showDetails : boolean = false;
+  promotions : Promotion[] = []
+  promotion : Promotion = {
+    id: '',
+    products: [],
+    discount: 0,
+    time: 0
+  }
+
+  orgPrice : number
+  currentPrice : number
+
+  constructor(private messageService: MessageServiceService,
+    private productService : ProduktServisService,
+    private db : AngularFireDatabase) { }
 
   ngOnInit() {
     // this.sendMessage();
+    this.orgPrice = this.product.price
+    this.currentPrice = this.orgPrice
+    this.getPromotions();
+
+  }
+
+  showDescription(){
+    this.showDetails = !this.showDetails
   }
 
   deleteProductComponent(product : ProductInterface){
@@ -42,8 +67,59 @@ export class ProduktComponent implements OnInit {
 
   addToCart(){
     if(this.product.count > 0){
-      this.toAddToCart.emit(this.product);
-      this.messageService.sendMessage(this.product);
+      let p : ProductInterface = {
+        id: this.product.id,
+        name: this.product.name,
+        price: this.currentPrice,
+        count: this.product.count,
+        description: this.product.description,
+        img: this.product.img
+      }
+      this.toAddToCart.emit(p);
+      this.messageService.sendMessage(p);
+    }
+  }
+
+  getPromotions(){
+    if(this.productService.dataSource === 'firebase'){
+      this.db.list<Promotion>('/promotions').valueChanges().subscribe(
+        data => {
+          this.promotions = data
+          // console.log(this.product.name + ' ' + this.promotions)
+
+          if(this.promotions !== undefined && this.promotions !== []){
+            let found = false;
+            this.promotions.forEach(
+              promotion => {
+                if(promotion.products !== []){
+                  promotion.products.forEach(
+                    id => {
+                      if(id === this.product.id){
+                        this.promotion = promotion
+                        found = true
+                      } 
+                    }
+                  )
+                }
+              }
+            )
+            if(!found) this.promotion = {
+              id: '',
+              products: [],
+              discount: 0,
+              time: 0
+            }
+          }
+
+          if(this.promotion.discount !== 0){
+            this.currentPrice = ((100-this.promotion.discount)/100) * this.product.price;
+          }else{
+            this.currentPrice = this.orgPrice
+          }
+        }
+      )
+    }else{
+
     }
   }
 

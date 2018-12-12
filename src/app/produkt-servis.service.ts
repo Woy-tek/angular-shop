@@ -27,7 +27,7 @@ export class ProduktServisService {
 
   // productList : Observable<any[]>;
 
-  dataSource : string = 'mongo'
+  dataSource : string = 'firebase'
 
   constructor(private http: HttpClient, private db : AngularFireDatabase) {
     // this.products = this.getInMemoryData();
@@ -115,7 +115,7 @@ export class ProduktServisService {
   // }
 
   addProductToTable(product : ProductInterface, tab : ProductInterface[]) : ProductInterface[]{
-    let i = tab.findIndex(t => t.name == product.name);
+    let i = tab.findIndex(t => t.name == product.name && t.price === product.price);
     if(i > -1){
       tab[i].count++;
     }

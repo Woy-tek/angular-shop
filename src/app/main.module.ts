@@ -32,6 +32,7 @@ import { FirebaseActionsComponent } from './firebase-actions/firebase-actions.co
 import { FirebaseServiceService } from './firebase-service.service';
 import { OrderComponent } from './orders/order/order.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     EditProductComponent,
     FirebaseActionsComponent,
     OrderComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    PromotionsComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),

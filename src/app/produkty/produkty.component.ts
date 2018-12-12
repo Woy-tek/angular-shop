@@ -5,7 +5,10 @@ import { KoszykComponent } from '../koszyk/koszyk.component';
 import { PagesService } from '../pages.service';
 import { element } from '@angular/core/src/render3';
 import { Observable } from 'rxjs';
-import { findIndex } from 'rxjs/operators';
+import { findIndex, tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { Promotion } from '../promotions/promotions.component';
 
 @Component({
   selector: 'hello-produkty',
@@ -32,13 +35,38 @@ export class ProduktyComponent implements OnInit {
 
   obj : Observable<ProductInterface>;
 
-  constructor(private productsService : ProduktServisService, private pagesService : PagesService) { 
+  // data = new Date().getDate()
+
+
+  private httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  }
+
+  constructor(private productsService : ProduktServisService, 
+    private pagesService : PagesService,
+    private http : HttpClient,
+    private db : AngularFireDatabase) { 
     // this.napis = this.productsService.napis;
     // this.productsService.nap("BBB");;
   }
 
   ngOnInit() {
-    this.getProducts();
+    // if(this.productsService.dataSource === 'firebase'){
+      this.getProducts();
+    // }else{
+    //   this.http.get<ProductInterface[]>('api/products').subscribe(
+    //     anwser => {
+    //       console.log(anwser)
+    //       this.products = []
+    //       anwser.forEach(
+    //         product => {
+    //           console.log(product)
+    //           this.products.push(product)
+    //         }
+    //       )
+    //     }
+    //   );  
+    // }
   }
 
   // aaa(){
@@ -50,6 +78,7 @@ export class ProduktyComponent implements OnInit {
   // }
 
   getProducts() : void {
+    if(this.productsService.dataSource === 'firebase'){
     this.productsService.getProducts().subscribe(
       element => {
         this.products = element;
@@ -64,6 +93,33 @@ export class ProduktyComponent implements OnInit {
         this.setPage(this.pagesService.currentPage);
       }
     )
+    }else{
+      this.getHttpProducts();
+    }
+  }
+
+  getHttpProducts(){
+    this.http.get<ProductInterface[]>('api/products').subscribe(
+      anwser => {
+        // console.log(anwser)
+        this.products = []
+        anwser.forEach(
+          product => {
+            // console.log(product)
+            this.products.push(product)
+          }
+        )
+
+        this.sum = 0;
+        for(let i of this.products){
+          this.sum += i.count;
+        }
+    
+        this.getMax();
+        this.getDescriptions();
+        this.setPage(this.pagesService.currentPage);
+      }
+    );  
   }
 
 
@@ -74,6 +130,8 @@ export class ProduktyComponent implements OnInit {
   }
 
   addToCart(product : ProductInterface){
+    let orgPrice = this.products.filter(p => p.id === product.id)[0].price;
+    console.log(orgPrice)
     let p = {
       id: product.id,
       name: product.name,
@@ -83,7 +141,26 @@ export class ProduktyComponent implements OnInit {
       img: product.img
     }
 
-    this.productsService.updateProduct(p)
+    let p2 = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: orgPrice,
+      count: product.count - 1,
+      img: product.img
+    }
+
+    if(this.productsService.dataSource === 'firebase'){
+      this.productsService.updateProduct(p2)
+    }else{
+      // console.log('POST')
+      this.http.post<ProductInterface>('api/products',p,this.httpOptions).pipe(
+        tap(_ => console.log(`updated product`))
+        // ,catchError(this.handleError<ProductInterface>("Update product ERROR"))
+      ).subscribe(
+        a => this.getHttpProducts()
+      )
+    }
     // .then(
     //   product => {
     //     console.log('AAA');
