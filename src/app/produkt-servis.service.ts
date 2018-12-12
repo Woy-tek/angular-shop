@@ -27,7 +27,8 @@ export class ProduktServisService {
 
   // productList : Observable<any[]>;
 
-  dataSource : string = 'firebase'
+  dataSource : string = 'mongo'
+  promoSource : string = 'socket'
 
   constructor(private http: HttpClient, private db : AngularFireDatabase) {
     // this.products = this.getInMemoryData();
@@ -44,6 +45,14 @@ export class ProduktServisService {
   changeDataSource(){
     if(this.dataSource === 'firebase'){
       this.dataSource = 'mongo'
+    }else{
+      this.dataSource ='firebase'
+    }
+  }
+
+  changePromoSource(){
+    if(this.dataSource === 'firebase'){
+      this.dataSource = 'socket'
     }else{
       this.dataSource ='firebase'
     }

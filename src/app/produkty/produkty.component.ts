@@ -9,6 +9,7 @@ import { findIndex, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Promotion } from '../promotions/promotions.component';
+import { PromotionMessageService } from '../promotion-message.service';
 
 @Component({
   selector: 'hello-produkty',
@@ -45,7 +46,8 @@ export class ProduktyComponent implements OnInit {
   constructor(private productsService : ProduktServisService, 
     private pagesService : PagesService,
     private http : HttpClient,
-    private db : AngularFireDatabase) { 
+    private db : AngularFireDatabase,
+    private promoService : PromotionMessageService) { 
     // this.napis = this.productsService.napis;
     // this.productsService.nap("BBB");;
   }

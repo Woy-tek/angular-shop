@@ -1,5 +1,12 @@
 <div class="container" *ngIf="this.currentPermission === this.permissionTo">
   <h3>Promocje</h3>
+  <ul>
+    <li *ngFor="let p of actualPromos">
+      {{p.discount}} {{p.time}}
+    </li>
+  </ul>
+  <button class="btn btn-primary" (click)=changePromo()>Zmień sposób propagacji</button>
+  <button class="btn btn-primary" (click)=add()>AAA</button>
   <!-- <button class="btn btn-primary" (click)="changeBase()">ChangeBase</button> -->
   <div class="row" >
     <div class="col-12">

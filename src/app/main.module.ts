@@ -33,6 +33,8 @@ import { FirebaseServiceService } from './firebase-service.service';
 import { OrderComponent } from './orders/order/order.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { PromotionsComponent } from './promotions/promotions.component';
+import { WebsocketService } from './websocket.service';
+import { PromotionMessageService } from './promotion-message.service';
 
 @NgModule({
   declarations: [
@@ -70,7 +72,7 @@ import { PromotionsComponent } from './promotions/promotions.component';
     AngularFireAuthModule,
     AngularFireDatabaseModule
   ],
-  providers: [ProduktServisService, OrderService, FirebaseServiceService],
+  providers: [ProduktServisService, OrderService, FirebaseServiceService, WebsocketService, PromotionMessageService],
   bootstrap: [HelloComponent]
 })
 export class MainModule { }
