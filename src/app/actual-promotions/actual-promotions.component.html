@@ -1,0 +1,17 @@
+<div class="container bg-white" *ngIf="promotions.length !== 0">
+  <div class="row col-12">
+    <div class="card-body">
+      <h3>PROMOCJE</h3>
+      <div class="container">
+        <div class="row" *ngFor="let p of promotions">
+          <div class="col-6">
+            <span *ngFor="let prod of p.products">{{prod.name}} </span>
+          </div>
+          <div class="col-6">
+            -{{p.discount}}%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -35,6 +35,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { PromotionsComponent } from './promotions/promotions.component';
 import { WebsocketService } from './websocket.service';
 import { PromotionMessageService } from './promotion-message.service';
+import { ActualPromotionsComponent } from './actual-promotions/actual-promotions.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { PromotionMessageService } from './promotion-message.service';
     FirebaseActionsComponent,
     OrderComponent,
     PageNotFoundComponent,
-    PromotionsComponent
+    PromotionsComponent,
+    ActualPromotionsComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),

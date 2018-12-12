@@ -21,7 +21,12 @@
         <tbody>
           <tr>
             <td><input type="text" [(ngModel)]=discount></td>
-            <td><input type="text" [(ngModel)]=time></td>
+            <td><input type="text" [(ngModel)]=time>
+              <select [(ngModel)]=timeMeasure>
+                <option value="s">sekund</option>
+                <option value="min">minut</option>
+              </select>
+            </td>
             <td><button class="btn btn-primary" (click)=addPromotion()>Aktywuj promocję</button></td>
           </tr>
         </tbody>

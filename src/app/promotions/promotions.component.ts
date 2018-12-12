@@ -31,6 +31,8 @@ export class PromotionsComponent implements OnInit {
   discount : number = 0.0
   time : number = 0
 
+  timeMeasure : string = 's'
+
   actualPromos : Promotion[] = []
 
   private httpOptions = {
@@ -125,14 +127,21 @@ export class PromotionsComponent implements OnInit {
         p => ids.push(p.id)
       )
 
+      let time = +this.time;
+      if(this.timeMeasure === 'min'){
+        time = time * 60000;
+      }else{
+        time = time * 1000;
+      }
+
       let promotion : Promotion = {
         id: this.db.createPushId(),
         products: ids,
         discount: +this.discount,
-        time: +this.time
+        time: time
       } 
 
-      let t = +this.time
+      let t = time
 
       if(this.productService.promoSource === 'firebase'){
         this.db.object('/promotions/' + promotion.id).update(promotion)

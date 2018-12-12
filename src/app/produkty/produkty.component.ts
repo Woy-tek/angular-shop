@@ -5,7 +5,7 @@ import { KoszykComponent } from '../koszyk/koszyk.component';
 import { PagesService } from '../pages.service';
 import { element } from '@angular/core/src/render3';
 import { Observable } from 'rxjs';
-import { findIndex, tap } from 'rxjs/operators';
+import { findIndex, tap, filter } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Promotion } from '../promotions/promotions.component';
@@ -33,6 +33,8 @@ export class ProduktyComponent implements OnInit {
   checkbox1 : boolean = false;
   checkbox2 : boolean = false;
   checkbox3 : boolean = false;
+
+  keyWord : string = ''
 
   obj : Observable<ProductInterface>;
 
@@ -234,6 +236,9 @@ export class ProduktyComponent implements OnInit {
 
   filteringTab(tab : ProductInterface[], min : number, max : number){
     let resultTab = [];
+    if(this.keyWord !== ''){
+      this.filterTab.push(this.keyWord);
+    }
     if(this.filterTab.length == 0){
       tab.forEach(element => {
         if(element.price >= min && element.price <= max){
@@ -251,10 +256,20 @@ export class ProduktyComponent implements OnInit {
               let i = resultTab.findIndex(t => t.name === element.name);
               if(i < 0) resultTab.push(element);
             }
+            if((element.name.toLowerCase().indexOf(e.toLowerCase()) > -1) ){
+              // console.log(e + " " + element.name)
+              let i = resultTab.findIndex(t => t.name === element.name);
+              if(i < 0) resultTab.push(element);
+            }
             // if(e == element.description) resultTab.push(element);
           })
         }
       })
+    }
+
+    if(this.keyWord !== ''){
+      let i = this.filterTab.indexOf(this.keyWord);
+      if(i > -1) this.filterTab.splice(i,1);
     }
 
     return resultTab;
@@ -297,6 +312,7 @@ export class ProduktyComponent implements OnInit {
     this.checkbox1 = false;
     this.checkbox2 = false;
     this.checkbox3 = false;
+    this.keyWord = '';
     this.getDescriptions();
     this.setPage(0);
   }

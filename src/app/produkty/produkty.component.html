@@ -14,10 +14,13 @@
         <br>
           <input type="checkbox" [(ngModel)]='checkbox3' (change)="doFiltering('niesmaczny')"> Kategoria 'Niesmaczny'
         <br>
+          Słowo kluczowe: <input type="text" [(ngModel)]="keyWord">
       </div>
         <!-- <ul>
           <li *ngFor="let a of filterTab">{{a}}</li>
         </ul> -->
+
+
       <div class="text-right float-right col-lg-6 col-sm-12">
         <h3>Zakres ceny</h3>
         <input class="col-3" type="text" [(ngModel)]="minFilter">
@@ -26,6 +29,9 @@
         <button class="btn btn-primary" style="margin-right: 5px;" (click)="setPage(0)">Filtruj</button>
         <button class="btn btn-primary" (click)="resetFilter()">Resetuj Filtr</button>
       </div>
+    </div>
+    <div class="col-12 card">
+      <app-actual-promotions></app-actual-promotions>
     </div>
     <div class="col-12 card" >
       <div class="card-body">
