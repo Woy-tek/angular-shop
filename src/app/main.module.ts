@@ -36,6 +36,7 @@ import { PromotionsComponent } from './promotions/promotions.component';
 import { WebsocketService } from './websocket.service';
 import { PromotionMessageService } from './promotion-message.service';
 import { ActualPromotionsComponent } from './actual-promotions/actual-promotions.component';
+import { PromoManagerService } from './promo-manager.service';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,7 @@ import { ActualPromotionsComponent } from './actual-promotions/actual-promotions
     AngularFireAuthModule,
     AngularFireDatabaseModule
   ],
-  providers: [ProduktServisService, OrderService, FirebaseServiceService, WebsocketService, PromotionMessageService],
+  providers: [ProduktServisService, OrderService, FirebaseServiceService, WebsocketService, PromotionMessageService, PromoManagerService],
   bootstrap: [HelloComponent]
 })
 export class MainModule { }

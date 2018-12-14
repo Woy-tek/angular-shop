@@ -38,7 +38,8 @@ export class ProduktyComponent implements OnInit {
 
   obj : Observable<ProductInterface>;
 
-  // data = new Date().getDate()
+  // data1 = new Date().getTime()
+  // data2 = new Date().getTime() + 100
 
 
   private httpOptions = {
@@ -52,6 +53,7 @@ export class ProduktyComponent implements OnInit {
     private promoService : PromotionMessageService) { 
     // this.napis = this.productsService.napis;
     // this.productsService.nap("BBB");;
+    // console.log(this.data2 - this.data1)
   }
 
   ngOnInit() {
@@ -135,7 +137,7 @@ export class ProduktyComponent implements OnInit {
 
   addToCart(product : ProductInterface){
     let orgPrice = this.products.filter(p => p.id === product.id)[0].price;
-    console.log(orgPrice)
+    // console.log("ORG PRICE: " + orgPrice)
     let p = {
       id: product.id,
       name: product.name,
@@ -144,6 +146,8 @@ export class ProduktyComponent implements OnInit {
       count: product.count - 1,
       img: product.img
     }
+
+    // console.log(p);
 
     let p2 = {
       id: product.id,
@@ -154,15 +158,26 @@ export class ProduktyComponent implements OnInit {
       img: product.img
     }
 
+    let p3 = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: orgPrice,
+      count: product.count - 1,
+      img: product.img
+    }
+
+    // console.log(p2);
+
     if(this.productsService.dataSource === 'firebase'){
       this.productsService.updateProduct(p2)
     }else{
       // console.log('POST')
-      this.http.post<ProductInterface>('api/products',p,this.httpOptions).pipe(
+      this.http.post<ProductInterface>('api/products',p3,this.httpOptions).pipe(
         tap(_ => console.log(`updated product`))
         // ,catchError(this.handleError<ProductInterface>("Update product ERROR"))
       ).subscribe(
-        a => this.getHttpProducts()
+        a => console.log('')//this.getHttpProducts()
       )
     }
     // .then(
@@ -173,6 +188,8 @@ export class ProduktyComponent implements OnInit {
     // )
     p.count = 1;
     this.productsService.addToCart(p);
+    // console.log('CART');
+    // console.log(this.productsService.getCart());
     // this.productsService.getProduct(p.id).subscribe(
     //   p => console.log(p.id + " " + p.name)
     // )

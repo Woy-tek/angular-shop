@@ -24,8 +24,8 @@ export class KoszykComponent implements OnInit, OnDestroy {
 
   napis : string = "";
 
-  products : ProductInterface[];
-  promotions: Promotion[];
+  products : ProductInterface[] = [];
+  promotions: Promotion[] = [];
 
   private httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -51,11 +51,6 @@ export class KoszykComponent implements OnInit, OnDestroy {
           this.products = a
         }
       )
-      this.db.list<Promotion>('/promotions').valueChanges().subscribe(
-        a => {
-          this.promotions = a
-        }
-      )
     }else{
       this.http.get<ProductInterface[]>('api/products').subscribe(
         anwser => {
@@ -68,6 +63,25 @@ export class KoszykComponent implements OnInit, OnDestroy {
             }
           )
       
+        }
+      )
+    }
+
+    if(this.productsService.promoSource === 'firebase'){
+      this.db.list<Promotion>('/promotions').valueChanges().subscribe(
+        a => {
+          this.promotions = a
+        }
+      )
+    }else{
+      this.http.get<Promotion[]>('api/promotions').subscribe(
+        anwser => {
+          this.promotions = []
+          anwser.forEach(
+            a => {
+              this.promotions.push(a)
+            }
+          )
         }
       )
     }
@@ -91,12 +105,14 @@ export class KoszykComponent implements OnInit, OnDestroy {
   }
 
   deleteProduct(product : ProductInterface){
+    console.log("W delete")
     let p2 = this.products.filter(a => (a.name === product.name) )[0]
+    console.log(p2)
     let p =  {
       id: product.id,
       name: product.name,
       count: 1,
-      price: -product.price,
+      price: product.price,
       description: product.description,
       img: product.img
     }// as ProductInterface;
@@ -105,10 +121,11 @@ export class KoszykComponent implements OnInit, OnDestroy {
       id: product.id,
       name: product.name,
       count: p2.count+1,
-      price: product.price,
+      price: p2.price,
       description: product.description,
       img: product.img
     }
+    console.log(p3)
 
     if(this.productsService.dataSource === 'firebase'){
       this.db.object('/products/' + product.id).update(
@@ -141,8 +158,29 @@ export class KoszykComponent implements OnInit, OnDestroy {
   }
 
   addProduct(product : ProductInterface){
+    if(this.productsService.promoSource !== 'firebase'){
+      this.http.get<Promotion[]>('api/promotions').subscribe(
+        anwser => {
+          this.promotions = []
+          anwser.forEach(
+            a => {
+              this.promotions.push(a)
+            }
+          )
+          this.addProductAct(product);
+        }
+      )
+    }else{
+      this.addProductAct(product);
+    }
+    
+  }
 
+  addProductAct(product : ProductInterface){
+
+    // console.log("W add product");
     let p = this.products.filter(a => (a.name === product.name) )[0]
+    // console.log(p);
 
     let discount = 0;
     this.promotions.forEach(
@@ -153,6 +191,8 @@ export class KoszykComponent implements OnInit, OnDestroy {
         }
       }
     )
+
+    // console.log(discount)
 
     let p2 = {
       id: product.id,
@@ -168,7 +208,7 @@ export class KoszykComponent implements OnInit, OnDestroy {
         id: product.id,
         name: product.name,
         count: 1,
-        price: ((100-discount)/100) * product.price,
+        price: ((100-discount)/100) * p.price,
         description: product.description,
         img: product.img
       }// as ProductInterface;
@@ -182,16 +222,20 @@ export class KoszykComponent implements OnInit, OnDestroy {
         img: product.img
       }
     }
-    // console.log('AAA')
+    // console.log('p2');
+    // console.log(p2);
     let p3 = {
       id: product.id,
       name: product.name,
       count: p.count-1,
-      price: product.price,
+      price: p.price,
       description: product.description,
       img: product.img
     }
+
+    // if(discount !== 0) p3.price = ((100-discount)/100) * p.price
     // console.log("AB")
+    // console.log(p3);
 
     if(this.productsService.dataSource === 'firebase'){
       this.db.object('/products/' + product.id).update(

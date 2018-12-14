@@ -5,6 +5,8 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { Promotion } from '../promotions/promotions.component';
 import { HttpClient } from '@angular/common/http';
 import { ProductInterface } from '../produkty/productInterface';
+import { PromoManagerService } from '../promo-manager.service';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-actual-promotions',
@@ -18,21 +20,40 @@ export class ActualPromotionsComponent implements OnInit {
 
   promo : Promotion[] = []
 
+  date : number = 0//Date = new Date()
+
   constructor(private productService : ProduktServisService,
     private promoService : PromotionMessageService,
+    private promoManService : PromoManagerService,
     private db : AngularFireDatabase,
-    private http : HttpClient) { }
+    private http : HttpClient,
+    private actualTime : PromoManagerService) { }
 
   ngOnInit() {
+    // setInterval(
+    //   () => {
+    //     this.date = this.actualTime.now;
+    //   },1000
+    // )
     if(this.productService.promoSource === 'firebase'){
       this.loadData()
+      // this.deleteExpired();
     }else{
       this.promoService.messages.subscribe(
         msg => {
           this.loadData()
+          // this.deleteExpired();
         }
       )
     }
+
+    this.actualTime.getMessage().subscribe(
+      data => {
+        this.date = data;
+        if(this.promotions !== []) this.deleteExpired();
+      }
+    )
+
   }
 
   loadData(){
@@ -93,6 +114,7 @@ export class ActualPromotionsComponent implements OnInit {
             })
           }
         )
+        this.deleteExpired();
       }
     )
   }
@@ -128,11 +150,68 @@ export class ActualPromotionsComponent implements OnInit {
             })
           }
         )
-
-
+        this.deleteExpired();
       }
     )
   }
+
+  deleteExpired(){
+    
+    let result = [];
+    let result2 = [];
+    this.promotions.forEach(
+      p => {
+        if(p.time >= this.date){
+          result.push(p);
+        }else{
+          if(this.productService.promoSource === 'firebase'){
+            this.db.object<Promotion>('/promotions/' + p.id).remove();
+            // if(this.productService.promoSource !== 'firebase'){
+              // this.promoService.sendMsg(p)
+            // }
+          }else{
+            this.http.delete<Promotion>('api/promotions/' + p.id).pipe(
+              tap(() => console.log('aaa'))
+            ).subscribe(
+              a => {
+                console.log("deleted promotion");
+                // this.promoService.sendMsg(p)
+              }
+            );
+          }
+        }
+      }
+    )
+    this.promotions = result;
+
+    this.promo = []
+    this.promotions.forEach(
+      p => {
+        let tab = [];
+        p.products.forEach(
+          pp => {
+            tab.push(pp.id);
+          }
+        )
+        this.promo.push(
+          {
+            id: p.id,
+            products: tab,
+            discount: p.discount,
+            time: p.time
+          }
+        )
+      }
+    )
+
+    if(this.productService.promoSource !== 'firebase'){
+      this.promoManService.sendPromoTable(this.promo)
+    }else{
+
+    }
+  }
+
+
 
 }
 

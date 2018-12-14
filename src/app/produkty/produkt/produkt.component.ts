@@ -9,6 +9,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { Promotion } from 'src/app/promotions/promotions.component';
 import { PromotionMessageService } from 'src/app/promotion-message.service';
 import { HttpClient } from '@angular/common/http';
+import { PromoManagerService } from 'src/app/promo-manager.service';
 // import { Obj } from './produkty/produkty.component'
 
 @Component({
@@ -38,66 +39,111 @@ export class ProduktComponent implements OnInit {
   constructor(private messageService: MessageServiceService,
     private productService : ProduktServisService,
     private db : AngularFireDatabase,
-    private promoService : PromotionMessageService,
+    // private promoService : PromotionMessageService,
+    private promoService : PromoManagerService, 
     private http : HttpClient) { }
 
   ngOnInit() {
 
-    this.http.get<Promotion[]>('api/promotions').subscribe(
-      data => {
-        this.promotions = []
-        data.forEach(
-          a => {
-            this.promotions.push(a);
-          }
-        )
+    // this.http.get<Promotion[]>('api/promotions').subscribe(
+    //   data => {
+    //     this.promotions = []
+    //     data.forEach(
+    //       a => {
+    //         this.promotions.push(a);
+    //       }
+    //     )
 
-        if(this.promotions !== undefined){
-          let found = false;
-          this.promotions.forEach(
-            promotion => {
-              if(promotion.products !== []){
-                promotion.products.forEach(
-                  id => {
-                    if(id === this.product.id){
-                      console.log(this.product.name + "Found");
-                      this.promotion = promotion
-                      found = true
-                    } 
-                  }
-                )
-              }
-            }
-          )
-          if(!found) this.promotion = {
-            id: '',
-            products: [],
-            discount: 0,
-            time: 0
-          }
-        }
+    //     if(this.promotions !== undefined){
+    //       let found = false;
+    //       this.promotions.forEach(
+    //         promotion => {
+    //           if(promotion.products !== []){
+    //             promotion.products.forEach(
+    //               id => {
+    //                 if(id === this.product.id){
+    //                   console.log(this.product.name + "Found");
+    //                   this.promotion = promotion
+    //                   found = true
+    //                 } 
+    //               }
+    //             )
+    //           }
+    //         }
+    //       )
+    //       if(!found) this.promotion = {
+    //         id: '',
+    //         products: [],
+    //         discount: 0,
+    //         time: 0
+    //       }
+    //     }
 
-        if(this.promotion.discount !== 0){
-          console.log(this.product.name + "discount")
-          this.currentPrice = ((100-this.promotion.discount)/100) * this.product.price;
-        }else{
-          console.log(this.product.name + "ORG")
-          this.currentPrice = this.orgPrice
-        }
+    //     if(this.promotion.discount !== 0){
+    //       console.log(this.product.name + "discount")
+    //       this.currentPrice = ((100-this.promotion.discount)/100) * this.product.price;
+    //     }else{
+    //       console.log(this.product.name + "ORG")
+    //       this.currentPrice = this.orgPrice
+    //     }
 
       
 
-      }
-    )
+    //   }
+    // )
 
     // this.sendMessage();
+
+    // if(this.productService.promoSource !== 'firebase'){
+    //   this.promotions = [];
+    //   this.http.get<Promotion[]>('api/promotions').subscribe(
+    //     anwser => {
+    //       anwser.forEach(
+    //         a => {
+    //           this.promotions.push(a);
+    //         }
+    //       )
+    //     }
+    //   )
+    // }
+
     this.orgPrice = this.product.price
     this.currentPrice = this.orgPrice
     // console.log(this.product.name + "INIT")
     // console.log(this.promotions)
     this.getPromotions();
     // console.log(this.promotions)
-
+    if(this.promotions != []){
+      let found = false;
+      this.promotions.forEach(
+        promotion => {
+          if(promotion.products !== []){
+            promotion.products.forEach(
+              id => {
+                if(id === this.product.id){
+                  // console.log(this.product.name + "Found");
+                  this.promotion = promotion
+                  found = true
+                } 
+              }
+            )
+          }
+        }
+      )
+      if(!found) this.promotion = {
+        id: '',
+        products: [],
+        discount: 0,
+        time: 0
+      }
+      if(this.promotion.discount !== 0){
+        // console.log(this.product.name + "discount")
+        this.currentPrice = ((100-this.promotion.discount)/100) * this.product.price;
+      }else{
+        // console.log(this.product.name + "ORG")
+        this.currentPrice = this.orgPrice
+      }
+    }
   }
 
   showDescription(){
@@ -130,47 +176,50 @@ export class ProduktComponent implements OnInit {
         description: this.product.description,
         img: this.product.img
       }
+      // console.log("PRZED WYSŁANIEM:");
+      // console.log(p)
+      this.product.count--;
       this.toAddToCart.emit(p);
       this.messageService.sendMessage(p);
     }
   }
 
-  getP(){
-    console.log(this.product.name + " IN P")
-    console.log(this.promotions)
-    this.promoService.messages.subscribe(
-      data => {
-        console.log(data);
-        console.log(this.product.name + " IN SUB")
-        console.log(this.promotions)
-        let promo : Promotion = JSON.parse(data)
-        // let promo : Promotion = {
-        //   id: p.id,
-        //   discount: p.discount,
-        //   products: p.products,
-        //   time: p.time
-        // }
-        console.log(this.product.name + " PARSE " + typeof(promo) + " " + promo.discount)
-        console.log(this.promotions)
-        let p = this.promotions.filter(a => a.id === promo.id)[0];
-        let i = this.promotions.indexOf(p);
-        // let j = -1
-        // for(let i in this.promotions){
-        //   if(this.promotions[i].id === promo.id){
-        //     j = +i;
-        //   }
-        // }
-        // console.log(this.product.name + " AFTER I " + j)
-        // console.log(this.promotions)
-        if(i > -1){
-          this.promotions.splice(i,1);
-        }else{
-          this.promotions.push(promo);
-        }
-        console.log(this.promotions);
-      }
-    )
-  }
+  // getP(){
+  //   console.log(this.product.name + " IN P")
+  //   console.log(this.promotions)
+  //   this.promoService.messages.subscribe(
+  //     data => {
+  //       console.log(data);
+  //       console.log(this.product.name + " IN SUB")
+  //       console.log(this.promotions)
+  //       let promo : Promotion = JSON.parse(data)
+  //       // let promo : Promotion = {
+  //       //   id: p.id,
+  //       //   discount: p.discount,
+  //       //   products: p.products,
+  //       //   time: p.time
+  //       // }
+  //       console.log(this.product.name + " PARSE " + typeof(promo) + " " + promo.discount)
+  //       console.log(this.promotions)
+  //       let p = this.promotions.filter(a => a.id === promo.id)[0];
+  //       let i = this.promotions.indexOf(p);
+  //       // let j = -1
+  //       // for(let i in this.promotions){
+  //       //   if(this.promotions[i].id === promo.id){
+  //       //     j = +i;
+  //       //   }
+  //       // }
+  //       // console.log(this.product.name + " AFTER I " + j)
+  //       // console.log(this.promotions)
+  //       if(i > -1){
+  //         this.promotions.splice(i,1);
+  //       }else{
+  //         this.promotions.push(promo);
+  //       }
+  //       console.log(this.promotions);
+  //     }
+  //   )
+  // }
 
   getPromotions(){
     if(this.productService.promoSource === 'firebase'){
@@ -211,32 +260,20 @@ export class ProduktComponent implements OnInit {
         }
       )
     }else{
-      console.log(this.product.name + " IN")
-      console.log(this.promotions)
-      this.promoService.messages.subscribe(
+      this.promoService.promoSubject.subscribe(
         msg => {
-          console.log(msg);
-          console.log(this.promotions);
-          let promo : Promotion = JSON.parse(msg)
-          console.log(this.product.name + " PARSE " + typeof(promo) + " " + promo.discount)
-          console.log(this.promotions)
-          let p = this.promotions.filter(a => a.id === promo.id)[0];
-          let i = this.promotions.indexOf(p);
+          this.promotions = msg;
+          // let promo : Promotion = JSON.parse(msg)
+          // let p = this.promotions.filter(a => a.id === promo.id)[0];
+          // let i = this.promotions.indexOf(p);
 
-          console.log(this.product.name + " i " + i);
+          // if(i > -1){
+          //   this.promotions.splice(i,1);
+          // }else{
+          //   this.promotions.push(promo);
+          // }
 
-          if(i > -1){
-            console.log(this.product.name + "SPLICE");
-            this.promotions.splice(i,1);
-          }else{
-            console.log(this.product.name + "PUSH");
-            this.promotions.push(promo);
-          }
-
-          console.log(this.product.name + this.promotions)
-          console.log(this.promotions)
-
-          if(this.promotions !== undefined){
+          if(this.promotions !== undefined && this.promotions !== []){
             let found = false;
             this.promotions.forEach(
               promotion => {
@@ -244,7 +281,6 @@ export class ProduktComponent implements OnInit {
                   promotion.products.forEach(
                     id => {
                       if(id === this.product.id){
-                        console.log(this.product.name + "Found");
                         this.promotion = promotion
                         found = true
                       } 
@@ -262,10 +298,8 @@ export class ProduktComponent implements OnInit {
           }
 
           if(this.promotion.discount !== 0){
-            console.log(this.product.name + "discount")
             this.currentPrice = ((100-this.promotion.discount)/100) * this.product.price;
           }else{
-            console.log(this.product.name + "ORG")
             this.currentPrice = this.orgPrice
           }
 

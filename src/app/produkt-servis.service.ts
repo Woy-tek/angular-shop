@@ -28,7 +28,7 @@ export class ProduktServisService {
   // productList : Observable<any[]>;
 
   dataSource : string = 'firebase'
-  promoSource : string = 'firebase'
+  promoSource : string = 'socket'
 
   constructor(private http: HttpClient, private db : AngularFireDatabase) {
     // this.products = this.getInMemoryData();
@@ -159,7 +159,14 @@ export class ProduktServisService {
   }
 
   deleteSingleProduct(product : ProductInterface, tab : ProductInterface[]) : ProductInterface[]{
-    let i = tab.findIndex(t => t.name == product.name);
+    // console.log("IN DELETE")
+    let i = tab.findIndex(t => t.name == product.name && t.price === product.price);
+    // console.log(i)
+    if(i < 0){
+      i = tab.findIndex(t => t.name == product.name);
+    }
+    // console.log(i)
+    // console.log(typeof(i))
     if(i > -1){
       if(tab[i].count > 1) tab[i].count--;
       else tab.splice(+i,1);

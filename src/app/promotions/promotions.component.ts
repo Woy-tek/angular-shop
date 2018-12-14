@@ -138,7 +138,7 @@ export class PromotionsComponent implements OnInit {
         id: this.db.createPushId(),
         products: ids,
         discount: +this.discount,
-        time: time
+        time: new Date().getTime() + time
       } 
 
       let t = time
@@ -148,9 +148,9 @@ export class PromotionsComponent implements OnInit {
         this.discount = 0,
         this.time = 0
         this.promotions = []
-        setTimeout(() => {
-          this.db.object('/promotions/' + promotion.id).remove()
-        },t)
+        // setTimeout(() => {
+        //   this.db.object('/promotions/' + promotion.id).remove()
+        // },t)
       }else{
         console.log('AAAAA');
 
@@ -166,16 +166,16 @@ export class PromotionsComponent implements OnInit {
         this.discount = 0;
         this.time = 0;
         this.promotions = [];
-        setTimeout(() => {
-          this.http.delete<Promotion>('api/promotions/' + promotion.id).pipe(
-            tap(() => console.log(''))
-          ).subscribe(
-            a => {
-              console.log("deleted promotion");
-            }
-          );
-          this.promoService.sendMsg(promotion);
-        },t)
+        // setTimeout(() => {
+        //   this.http.delete<Promotion>('api/promotions/' + promotion.id).pipe(
+        //     tap(() => console.log(''))
+        //   ).subscribe(
+        //     a => {
+        //       console.log("deleted promotion");
+        //     }
+        //   );
+        //   this.promoService.sendMsg(promotion);
+        // },t)
       }
     }
     // console.log("AAA")
